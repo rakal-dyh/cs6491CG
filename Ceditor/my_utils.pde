@@ -1,7 +1,6 @@
 //Given two point A,B, and the direction Va and Vb at those two points, calculate the distance
 //that satisfy AA'=d, BB'=d, A'B'=2d, where A' and B' are two points that A'=A+d*Va, B'=B+d*Vb
 
-
 class InterpolationWithTwoDMethod{
   pt A;
   pt B;
@@ -14,6 +13,8 @@ class InterpolationWithTwoDMethod{
   pt O2;
   boolean isLine1;
   boolean isLine2;
+  pt AA;
+  pt BB;
 
   InterpolationWithTwoDMethod(pt A,pt B,vec va,vec vb){
     this.A=A;
@@ -39,9 +40,9 @@ class InterpolationWithTwoDMethod{
 
 
     //d=(-b+(b*b-4*a*c)^0.5)/(2*a);
-    d=(-b+sqrt(b*b-4*a*c))/(2*a);
-    pt AA=P(A,V(d,va));
-    pt BB=P(B,V(d,vb));
+    d=(-b-sqrt(b*b-4*a*c))/(2*a);
+    this.AA=P(A,V(d,va));
+    this.BB=P(B,V(d,vb));
     vc=U(V(AA,BB));
     C=P(AA,0.5,BB);
     vec vna=B(va,vc);//norm to va in va,vc plain
@@ -81,34 +82,7 @@ class InterpolationWithTwoDMethod{
     this.O2=f2.O;
     this.isLine1=f1.isLine;
     this.isLine2=f2.isLine;
-    //calculate O1
-    // xav=vna.x;
-    // yav=vna.y;
-    // zav=vna.z;
-    // xa=A.x;
-    // ya=A.y;
-    // za=A.z;
-    //
-    // xcv=vnc1.x;
-    // ycv=vnc1.y;
-    // zcv=vnc1.z;
-    // xc=C.x;
-    // yc=C.y;
-    // zx=C.z;
-    // float test=abs(xcv)-abs(xav)+abs(ycv)-abs(yav)+abs(zcv)-abs(zav);
-    // if (test<0.0001){
-    //   isLine=true
-    // }
-    // else{
-    //   isLine=false;
-    // }
-    // O1=P();
-    //
-    // if (!isLine){
-    //
-    // }
-
-    //calculate O2
+    //System.out.println(O1);
   }
 
 }
@@ -147,4 +121,132 @@ class findCircleCenter{
       this.O=P(A,r,vna);
     }
   }
+}
+
+//this class used to store each elbow required parameter
+class singleElbowPara{
+  pt S;//start point
+  pt E;//end point
+  pt O;//circle canter
+  pt A;
+  boolean isLine;//circle or line
+  singleElbowPara(pt S,pt E,pt O, boolean isLine){
+    this.S=S;
+    this.E=E;
+    this.O=O;
+    this.isLine=isLine;
+  }
+  singleElbowPara(pt S,pt E,pt O,pt A, boolean isLine){
+    this.S=S;
+    this.E=E;
+    this.O=O;
+    this.A=A;
+    this.isLine=isLine;
+  }
+  void set(pt S,pt E,pt O, boolean isLine){
+    this.S=S;
+    this.E=E;
+    this.O=O;
+    this.isLine=isLine;
+  }
+  String toString(){
+    String out="";
+    out+=S.toString();
+    out+=";";
+    out+=E.toString();
+    out+=";";
+    out+=O.toString();
+    out+=";";
+    return out;
+  }
+}
+
+
+//store a list of elbow para
+class elbowPara{
+  singleElbowPara[] allElbowPara;//an array to store each elbow parameter
+  pt[] extendPoints;//an array to store final control points
+  int num;
+  vec[] v;
+  pts expts;
+
+  elbowPara(pts controlPoints){
+    pt[] points=controlPoints.G;//origin control points
+    int pointsNum=controlPoints.nv;//origin points number
+    this.num=pointsNum;
+    v=new vec[pointsNum];//direction vector for each origin point
+
+    extendPoints=new pt[2*pointsNum];//more points after interpolation
+    allElbowPara=new singleElbowPara[2*pointsNum];//all elbows
+    v=new vec[pointsNum];
+    for (int i=0;i<pointsNum;i++){
+      pt A=points[i];
+      pt B=getNext(i,points,pointsNum);
+      vec va=V(getPrevious(i,points,pointsNum),B);
+      vec vb=V(A,getNext2(i,points,pointsNum));
+      InterpolationWithTwoDMethod tmpElbow=new InterpolationWithTwoDMethod(A,B,va,vb);
+      //singleElbowPara elbow1=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.isLine1);
+      //singleElbowPara elbow2=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.isLine2);
+      //allElbowPara[2*i]=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.isLine1);
+      //allElbowPara[2*i+1]=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.isLine2);
+      allElbowPara[2*i]=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.AA,tmpElbow.isLine1);
+      allElbowPara[2*i+1]=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.BB,tmpElbow.isLine2);
+      extendPoints[2*i]=allElbowPara[2*i].S;
+      extendPoints[2*i+1]=allElbowPara[2*i+1].S;
+      v[i]=va;
+    }
+    expts=new pts();
+    expts.declare();
+    expts.empty();
+    for(int i=0;i<2*pointsNum;i++){
+      expts.addPt(extendPoints[i]);
+    }
+  }
+
+  pt getPrevious(int pos,pt[] points,int len){
+    if(pos==0){
+      return points[len-1];
+    }
+    else{
+      return points[pos-1];
+    }
+  }
+
+  pt getNext(int pos, pt[] points,int len){
+    if(pos==len-1){
+      return points[0];
+    }
+    else{
+      return points[pos+1];
+    }
+  }
+
+  pt getNext2(int pos, pt[] points,int len){
+    if(pos==len-2){
+      return points[0];
+    }
+    else{
+      if(pos==len-1){
+        return points[1];
+      }
+      else{
+        return points[pos+2];
+      }
+    }
+  }
+
+  String toString(){
+    String out="";
+    for(int i=0;i<extendPoints.length;i++){
+      out+=extendPoints[i].toString();
+      out+=";";
+    }
+    return out;
+  }
+  // String toString(){
+  //   String out="";
+  //   out+=Integer.toString(extendPoints.length);
+  //   return out;
+  // }
+
 }

@@ -66,7 +66,18 @@ void draw() {
 
   //fill(blue); if(showCurve) Q.drawClosedCurve(3);
   if(showControl) {fill(grey); P.drawClosedCurve(3);}  // draw control polygon
-  System.out.println(P);
+
+  //System.out.println(P);
+  elbowPara elbowp=new elbowPara(P);
+  System.out.println(elbowp);
+  for(int ind=0;ind<elbowp.extendPoints.length;ind++){
+    //show(elbowp.extendPoints[ind],50);
+    if (ind<elbowp.num){
+      //cylinderSection(elbowp.extendPoints[ind],elbowp.extendPoints[ind+1],5);
+      arrow(P.G[ind],elbowp.v[ind],4);
+    }
+  }
+  elbowp.expts.drawClosedCurve(5);
   fill(yellow,100); P.showPicked();
 
 
