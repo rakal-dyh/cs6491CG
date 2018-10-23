@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 class Elbow {
   pt S; pt E; pt O;
   float rc;
@@ -19,6 +21,9 @@ class Elbow {
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
+    float r = norm(V(O,S));
+    float alpha = angle(V(O,S), V(O,E));
+    length = alpha * r;
     
     if (this.isLine) calculateFieldsLine();
     else calculateFields();
@@ -37,8 +42,11 @@ class Elbow {
     
     // for loop limit: alpha < e * TWO_PI - d_alpha / 2
     for (int i = 0; i <= num_of_circles; i++) {
-      pt C = P(S, (float) i/num_of_circles, E);
-      centers[i] = C;
+      if (i < num_of_circles) {
+        pt C = P(S, (float) i/num_of_circles, E);
+        centers[i] = C;
+      } else
+        centers[i] = E;
       for (int j = 0; j < num_of_circle_vectors; j++) {
         vec K = R(K0, j * d_beta, K0_normalized, OC);
         circle_vectors[i][j] = K;
@@ -65,10 +73,12 @@ class Elbow {
     
     // for loop limit: alpha < e * TWO_PI - d_alpha / 2
     for (int i = 0; i <= num_of_circles; i++) {
-      vec OC = R(OS, i * d_alpha, OS_normalized, OS_normal_in_OSE);
+      vec OC = V(O, E);
+      if (i < num_of_circles)
+        OC = R(OS, i * d_alpha, OS_normalized, OS_normal_in_OSE);
       pt C = P(O, OC);
       centers[i] = C;
-      if (i == 8) System.out.println("C: " + C.x + " " + C.y + " " + C.z);
+      if (i == num_of_circles / 2) System.out.println("C: " + C.x + " " + C.y + " " + C.z);
       OC.normalize();
       for (int j = 0; j < num_of_circle_vectors; j++) {
         vec K = R(K0, j * d_beta, K0_normalized, OC);
@@ -125,16 +135,52 @@ void drawElbow(Elbow e) {
   }
 }
 
-class PPath {
-  
+void drawTorusAroundStartCircle(Elbow e) {
+  float rp = e.rc / 10;
+  for (int i = 0; i < e.num_of_circle_vectors; i++) {
+    fill(black);
+    pt A = P(e.centers[0], e.circle_vectors[0][i]);
+    pt B = P(e.centers[0], e.circle_vectors[0][i + 1]);
+    cylinderSection(A, B, rp);
+  }
 }
 
-void drawP(Elbow e, int index) {
-  float rp = e.rc / 10;
-  for (int i = 0; i < e.num_of_circles; i++) {
+class PPath {
+  pt O;
+  float rc;
+  boolean isLine;
+  int num_of_circles; int num_of_circle_vectors;
+  pt[] centers;
+  vec[] circle_vectors;
+  pt start;
+  
+  PPath(Elbow e, pt start) {
+    this.O = e.O;
+    this.isLine = e.isLine;
+    this.num_of_circles = e.num_of_circles;
+    this.num_of_circle_vectors = e.num_of_circle_vectors;
+    this.centers = Arrays.copyOf(e.centers, e.centers.length);
+    this.circle_vectors = new vec[num_of_circles + 1];
+    this.start = start;
+  }
+  
+  PPath(Elbow e) {
+    this.O = e.O;
+    this.isLine = e.isLine;
+    this.num_of_circles = e.num_of_circles;
+    this.num_of_circle_vectors = e.num_of_circle_vectors;
+    this.centers = Arrays.copyOf(e.centers, e.centers.length);
+    this.circle_vectors = new vec[num_of_circles + 1];
+    this.start = P(e.centers[0], e.circle_vectors[0][0]);
+  }
+}
+
+void drawP(PPath ppath) {
+  float rp = ppath.rc / 10;
+  for (int i = 0; i < ppath.num_of_circles; i++) {
     fill(red);
-    pt A = P(e.centers[i], e.circle_vectors[i][index]);
-    pt B = P(e.centers[i + 1], e.circle_vectors[i + 1][index]);
+    pt A = P(ppath.centers[i], ppath.circle_vectors[i]);
+    pt B = P(ppath.centers[i + 1], ppath.circle_vectors[i + 1]);
     cylinderSection(A, B, rp);
   }
 }
