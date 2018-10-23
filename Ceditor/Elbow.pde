@@ -101,7 +101,7 @@ class Elbow {
       for (int j = 0; j < num_of_circle_vectors; j++) {
         circle_vectors_twisted[i][j] = R(circle_vectors[i][j], (float) i * t / num_of_circles, bak_1_normalized, bak_2_normalized);
       }
-      circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors[i][0];
+      circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
     }
   }
 }
