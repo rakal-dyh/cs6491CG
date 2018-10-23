@@ -79,6 +79,14 @@ void draw() {
   }
   elbowp.expts.drawClosedCurve(5);
   fill(yellow,100); P.showPicked();
+  
+  // render an elbow twisted by 180 degree at the end
+  pt S = P(-100, 0, 50);
+  pt E = P(100, 0, 50);
+  pt O = P(0, 50, 50);
+  Elbow e = new Elbow(S, E, O, false);
+  e.twist_end(PI);
+  drawElbow(e);
 
 
   //if(animating)
