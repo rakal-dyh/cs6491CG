@@ -9,7 +9,7 @@ class Elbow {
   vec[][] circle_vectors_twisted;
   float length;
   color[] cls = new color[]{yellow, blue, orange, green};
-  
+
   Elbow(pt S, pt E, pt O, boolean isLine) {
     this.S = S; this.E = E; this.O = O;
     this.rc = 20;
@@ -19,11 +19,11 @@ class Elbow {
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
-    
+
     if (this.isLine) calculateFieldsLine();
     else calculateFields();
   }
-  
+
   void calculateFieldsLine() {
     vec SE = V(S, E);
     vec K0 = Normal(SE);
@@ -32,9 +32,9 @@ class Elbow {
     K0_normalized.normalize();
     vec OC = N(SE, K0);
     OC.normalize();
-    
+
     float d_beta = TWO_PI / num_of_circle_vectors;
-    
+
     // for loop limit: alpha < e * TWO_PI - d_alpha / 2
     for (int i = 0; i <= num_of_circles; i++) {
       pt C = P(S, (float) i/num_of_circles, E);
@@ -46,7 +46,7 @@ class Elbow {
       circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
     }
   }
-  
+
   void calculateFields() {
     vec OS = V(O, S);
     vec OS_normalized = V(OS.x, OS.y, OS.z);
@@ -58,11 +58,11 @@ class Elbow {
     K0_normalized.normalize();
     vec OS_normal_in_OSE = B(OS, OE); // in plane O, S, E and orthogonal to OS
     OS_normal_in_OSE.normalize();
-    
+
     float alpha = angle(OS, OE);
     float d_alpha = alpha / num_of_circles;
     float d_beta = TWO_PI / num_of_circle_vectors;
-    
+
     // for loop limit: alpha < e * TWO_PI - d_alpha / 2
     for (int i = 0; i <= num_of_circles; i++) {
       vec OC = R(OS, i * d_alpha, OS_normalized, OS_normal_in_OSE);
@@ -77,7 +77,7 @@ class Elbow {
       circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
     }
   }
-  
+
   void twist_all(float t) {
     for (int i = 0; i <= num_of_circles; i++) {
       vec bak_1 = circle_vectors[i][0];
@@ -90,7 +90,7 @@ class Elbow {
       circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
     }
   }
-  
+
   void twist_end(float t) {
     isTwisted = true;
     for (int i = 0; i <= num_of_circles; i++) {
@@ -126,7 +126,7 @@ void drawElbow(Elbow e) {
 }
 
 class PPath {
-  
+
 }
 
 void drawP(Elbow e, int index) {
