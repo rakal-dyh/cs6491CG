@@ -173,6 +173,8 @@ class PPath {
     this.circle_vectors = new vec[num_of_circles + 1];
     this.start = P(e.centers[0], e.circle_vectors[0][0]);
   }
+  
+  
 }
 
 void drawP(PPath ppath) {
