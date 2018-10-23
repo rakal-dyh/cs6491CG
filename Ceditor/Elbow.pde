@@ -92,6 +92,7 @@ class Elbow {
   }
   
   void twist_end(float t) {
+    isTwisted = true;
     for (int i = 0; i <= num_of_circles; i++) {
       vec bak_1 = circle_vectors[i][0];
       vec bak_2 = circle_vectors[i][num_of_circle_vectors / 4];
@@ -111,18 +112,22 @@ void drawElbow(Elbow e) {
     for (int j = 0; j < e.num_of_circles; j++) {
       int num_of_vectors_in_strip = e.num_of_circle_vectors / 4;
       int start_index = i * num_of_vectors_in_strip;
+      vec[][] circle_vectors = e.circle_vectors_twisted;
+      if (!e.isTwisted) circle_vectors = e.circle_vectors;
       for (int k = start_index; k < start_index + num_of_vectors_in_strip; k++) {
-        pt A = P(e.centers[j], e.circle_vectors[j][k]);
-        pt B = P(e.centers[j], e.circle_vectors[j][k + 1]);
-        pt C = P(e.centers[j + 1], e.circle_vectors[j + 1][k + 1]);
-        pt D = P(e.centers[j + 1], e.circle_vectors[j + 1][k]);
+        pt A = P(e.centers[j], circle_vectors[j][k]);
+        pt B = P(e.centers[j], circle_vectors[j][k + 1]);
+        pt C = P(e.centers[j + 1], circle_vectors[j + 1][k + 1]);
+        pt D = P(e.centers[j + 1], circle_vectors[j + 1][k]);
         show(A, B, C, D);
       }
     }
   }
 }
 
-class 
+class PPath {
+  
+}
 
 void drawP(Elbow e, int index) {
   float rp = e.rc / 10;
