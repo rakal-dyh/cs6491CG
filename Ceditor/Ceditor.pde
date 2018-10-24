@@ -28,7 +28,8 @@ pts P = new pts(); // polyloop in 3D
 pts Q = new pts(); // second polyloop in 3D
 pts R = new pts(); // inbetweening polyloop L(P,t,Q);
 
-
+float elbow_twist;
+float ppath_twist;
 
 void setup() {
   myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
@@ -67,26 +68,37 @@ void draw() {
   //fill(blue); if(showCurve) Q.drawClosedCurve(3);
   if(showControl) {fill(grey); P.drawClosedCurve(3);}  // draw control polygon
 
-  //System.out.println(P);
+
   elbowPara elbowp=new elbowPara(P);
-  System.out.println(elbowp);
-  for(int ind=0;ind<elbowp.extendPoints.length;ind++){
-    //show(elbowp.extendPoints[ind],50);
-    if (ind<elbowp.num){
-      //cylinderSection(elbowp.extendPoints[ind],elbowp.extendPoints[ind+1],5);
-      arrow(P.G[ind],elbowp.v[ind],4);
-    }
+  if (elbowp.num<=1){
+
   }
-  elbowp.expts.drawClosedCurve(5);
+  else{
+    Elbow[] elbows=new Elbow[elbowp.extendPoints.length];
+    for(int ind=0;ind<elbowp.extendPoints.length;ind++){
+    //for(int ind=0;ind<1;ind++){
+      // if (ind<elbowp.num){
+      // }
+      singleElbowPara thise=elbowp.allElbowPara[ind];
+      Elbow e=new Elbow(thise.S,thise.E,thise.O,false);
+      elbows[ind]=e;
+      // drawElbow(e);
+      // drawTorusAroundStartCircle(e);
+    }
+    CurveElbow curvebow=new CurveElbow(elbows);
+    curvebow.draw();
+    elbowp.expts.drawClosedCurve(5);
+  }
+
   fill(yellow,100); P.showPicked();
-  
+
   // render an elbow twisted by 180 degree at the end
-  pt S = P(-100, 0, 50);
-  pt E = P(100, 0, 50);
-  pt O = P(0, 50, 50);
-  Elbow e = new Elbow(S, E, O, false);
-  e.twist_end(PI);
-  drawElbow(e);
+  // pt S = P(-100, 0, 50);
+  // pt E = P(100, 0, 50);
+  // pt O = P(0, 50, 50);
+  // Elbow e = new Elbow(S, E, O, false);
+  // e.twist_end(PI);
+  // drawElbow(e);
 
 
   //if(animating)
