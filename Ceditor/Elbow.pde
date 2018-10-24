@@ -7,7 +7,6 @@ class Elbow {
   int num_of_circles; int num_of_circle_vectors;
   pt[] centers;
   vec[][] circle_vectors;
-  boolean isTwisted;
   vec[][] circle_vectors_twisted;
   float length;
   color[] cls = new color[]{yellow, blue, orange, green};
@@ -94,8 +93,6 @@ class Elbow {
   void twist_end(float t) { twist(0, t); }
 
   void twist(float head, float tail) {
-    if (head != tail)
-      isTwisted = true;
     for (int i = 0; i <= num_of_circles; i++) {
       vec bak_1 = circle_vectors[i][0];
       vec bak_2 = circle_vectors[i][num_of_circle_vectors / 4];
@@ -117,7 +114,6 @@ void drawElbow(Elbow e) {
       int num_of_vectors_in_strip = e.num_of_circle_vectors / 4;
       int start_index = i * num_of_vectors_in_strip;
       vec[][] circle_vectors = e.circle_vectors_twisted;
-      if (!e.isTwisted) circle_vectors = e.circle_vectors;
       for (int k = start_index; k < start_index + num_of_vectors_in_strip; k++) {
         pt A = P(e.centers[j], circle_vectors[j][k]);
         pt B = P(e.centers[j], circle_vectors[j][k + 1]);
@@ -130,7 +126,7 @@ void drawElbow(Elbow e) {
 }
 
 void drawTorusAroundStartCircle(Elbow e) {
-  float rp = e.rc / 10;
+  float rp = e.rc / 8;
   for (int i = 0; i < e.num_of_circle_vectors; i++) {
     fill(black);
     pt A = P(e.centers[0], e.circle_vectors[0][i]);
