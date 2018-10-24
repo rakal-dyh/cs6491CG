@@ -1,7 +1,6 @@
-//Given two point A,B, and the direction Va and Vb at those two points, calculate the distance
-//that satisfy AA'=d, BB'=d, A'B'=2d, where A' and B' are two points that A'=A+d*Va, B'=B+d*Vb
-
 class InterpolationWithTwoDMethod{
+  //Given two point A,B, and the direction Va and Vb at those two points, calculate the distance
+  //that satisfy AA'=d, BB'=d, A'B'=2d, where A' and B' are two points that A'=A+d*Va, B'=B+d*Vb
   pt A;
   pt B;
   vec va;
@@ -107,7 +106,6 @@ class InterpolationWithTwoDMethod{
     this.isLine2=f2.isLine;
     //System.out.println(O1);
   }
-
 }
 
 class findCircleCenter{
@@ -162,93 +160,111 @@ class findCircleCenter{
   }
 }
 
-//this class used to store each elbow required parameter
-class singleElbowPara{
-  pt S;//start point
-  pt E;//end point
-  pt O;//circle canter
-  pt A;
-  boolean isLine;//circle or line
-  singleElbowPara(pt S,pt E,pt O, boolean isLine){
-    this.S=S;
-    this.E=E;
-    this.O=O;
-    this.isLine=isLine;
-  }
-  singleElbowPara(pt S,pt E,pt O,pt A, boolean isLine){
-    this.S=S;
-    this.E=E;
-    this.O=O;
-    this.A=A;
-    this.isLine=isLine;
-  }
-  void set(pt S,pt E,pt O, boolean isLine){
-    this.S=S;
-    this.E=E;
-    this.O=O;
-    this.isLine=isLine;
-  }
-  String toString(){
-    String out="";
-    out+=S.toString();
-    out+=";";
-    out+=E.toString();
-    out+=";";
-    out+=O.toString();
-    out+=";";
-    return out;
-  }
-}
+class elbowControl{
+  Elbow[] elbows;
+  CurveElbow curvebow;
 
+  pt[] inputPoints;
+  pt[] extendPoints;
+  pts extendPolygon;
+  vec[] verticesVec;
 
-//store a list of elbow para
-class elbowPara{
-  singleElbowPara[] allElbowPara;//an array to store each elbow parameter
-  pt[] extendPoints;//an array to store final control points
-  int num;
-  vec[] v;
-  pts expts;
+  //construction method which will call main function
+  elbowControl(pts initialPts){
+    mainDo(initialPts,0,0);
 
-  elbowPara(pts controlPoints){
-    pt[] points=controlPoints.G;//origin control points
-    int pointsNum=controlPoints.nv;//origin points number
-    this.num=pointsNum;
-    v=new vec[pointsNum];//direction vector for each origin point
+  }
 
-    extendPoints=new pt[2*pointsNum];//more points after interpolation
-    allElbowPara=new singleElbowPara[2*pointsNum];//all elbows
-    v=new vec[pointsNum];
-    for (int i=0;i<pointsNum;i++){
-      pt A=points[i];
-      pt B=getNext(i,points,pointsNum);
-      vec va=V(getPrevious(i,points,pointsNum),B);
-      vec vb=V(A,getNext2(i,points,pointsNum));
-      // System.out.println(va.x);
-      // System.out.println(va.y);
-      // System.out.println(va.z);
-      // System.out.println(vb.x);
-      // System.out.println(vb.y);
-      // System.out.println(vb.z);
-      InterpolationWithTwoDMethod tmpElbow=new InterpolationWithTwoDMethod(A,B,va,vb);
-      //singleElbowPara elbow1=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.isLine1);
-      //singleElbowPara elbow2=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.isLine2);
-      //allElbowPara[2*i]=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.isLine1);
-      //allElbowPara[2*i+1]=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.isLine2);
-      allElbowPara[2*i]=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.AA,tmpElbow.isLine1);
-      allElbowPara[2*i+1]=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.BB,tmpElbow.isLine2);
-      extendPoints[2*i]=allElbowPara[2*i].S;
-      extendPoints[2*i+1]=allElbowPara[2*i+1].S;
-      v[i]=va;
-      //System.out.println(allElbowPara[2*i].S);
-      //System.out.println(allElbowPara[2*i+1].S);
+  void mainDo(pts initialPts,int vecMethod, int subdivisionMethod){
+    pt[] points=pointsNoOverlapped(initialPts);//from pts to pt[], remove overlapped points
+    if (subdivisionMethod==0) this.inputPoints=subdivision_default(points);//subdivision, signal=0 means no subdivision
+    if (vecMethod==0) this.verticesVec=createVec_default(points);//create vertives vec, signal=0 means default method
+
+    int len=this.inputPoints.length;
+    this.extendPoints=new pt[2*len];
+    this.elbows=new Elbow[2*len];
+
+    //get elbows calculated
+    elbows=calculateElbows();
+    extendPolygon=getExtendPolygon();
+
+    this.curvebow=new CurveElbow(elbows);
+  }
+
+  //preprocess,change from pts to pt[], with duplicate point removed
+  pt[] pointsNoOverlapped(pts initialPts){
+    int initalLength=initialPts.nv;
+
+    //if given points number is not enough to make close elbow (<3), then return default three points
+    if (initalLength<=2){
+      pt[] returnPt=new pt[3];
+      returnPt[0]=P(1,0,0);
+      returnPt[1]=P(0,1,0);
+      returnPt[2]=P(0,0,1);
+      return returnPt;
     }
-    expts=new pts();
+
+    //count how many non-overlapped points;
+    int NumPointUsed=1;
+    for (int i=1;i<initalLength;i++){
+      if (d(initialPts.G[i-1],initialPts.G[i])<0.00001) continue;
+      NumPointUsed++;
+    }
+
+    //create point will be used, without overlapping
+    pt[] points=new pt[NumPointUsed];
+    points[0]=initialPts.G[0];
+    int pos=1;
+    for (int i=1;i<initalLength;i++){
+      if (d(initialPts.G[i-1],initialPts.G[i])<0.00001) continue;
+      points[pos]=initialPts.G[i];
+      pos++;
+    }
+    return points;
+  }
+
+  //modifty input control points using subdivision, default is no change
+  pt[] subdivision_default(pt[] inputPoints) {return inputPoints;}
+
+  //create the vertices vector
+  vec[] createVec_default(pt[] inputPoints){
+    int len=inputPoints.length;
+    vec[] returnVec=new vec[len];
+    for (int i=0;i<len;i++) returnVec[i]=V(getPrevious(i,inputPoints,len),getNext(i,inputPoints,len));
+    return returnVec;
+  }
+
+
+
+  Elbow[] calculateElbows(){
+    int n=this.inputPoints.length;
+    Elbow[] elbows=new Elbow[2*n];
+    for(int i=0;i<n;i++){
+      pt A=this.inputPoints[i];
+      pt B=getNext(i,this.inputPoints,n);
+      vec va=this.verticesVec[i];
+      vec vb=this.verticesVec[getNextInd(i,n)];
+      InterpolationWithTwoDMethod tmpElbow=new InterpolationWithTwoDMethod(A,B,va,vb);
+
+      elbows[2*i]=new Elbow(tmpElbow.A,tmpElbow.C,tmpElbow.O1,false);
+      elbows[2*i+1]=new Elbow(tmpElbow.C,tmpElbow.B,tmpElbow.O2,false);
+      extendPoints[2*i]=tmpElbow.A;
+      extendPoints[2*i+1]=tmpElbow.C;
+    }
+    return elbows;
+  }
+
+  pts getExtendPolygon(){
+    pts expts=new pts();
     expts.declare();
     expts.empty();
-    for(int i=0;i<2*pointsNum;i++){
-      expts.addPt(extendPoints[i]);
+    for(int i=0;i<extendPoints.length;i++){
+      expts.addPt(this.extendPoints[i]);
     }
+    return expts;
   }
+
+  void calculateTwoElbow(){}
 
   pt getPrevious(int pos,pt[] points,int len){
     if(pos==0){
@@ -268,32 +284,13 @@ class elbowPara{
     }
   }
 
-  pt getNext2(int pos, pt[] points,int len){
-    if(pos==len-2){
-      return points[0];
+  int getNextInd(int pos,int len){
+    if(pos==len-1){
+      return 0;
     }
     else{
-      if(pos==len-1){
-        return points[1];
-      }
-      else{
-        return points[pos+2];
-      }
+      return pos+1;
     }
   }
-
-  String toString(){
-    String out="";
-    for(int i=0;i<extendPoints.length;i++){
-      out+=extendPoints[i].toString();
-      out+=";";
-    }
-    return out;
-  }
-  // String toString(){
-  //   String out="";
-  //   out+=Integer.toString(extendPoints.length);
-  //   return out;
-  // }
 
 }

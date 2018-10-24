@@ -69,26 +69,9 @@ void draw() {
   if(showControl) {fill(grey); P.drawClosedCurve(3);}  // draw control polygon
 
 
-  elbowPara elbowp=new elbowPara(P);
-  if (elbowp.num<=1){
-
-  }
-  else{
-    Elbow[] elbows=new Elbow[elbowp.extendPoints.length];
-    for(int ind=0;ind<elbowp.extendPoints.length;ind++){
-    //for(int ind=0;ind<1;ind++){
-      // if (ind<elbowp.num){
-      // }
-      singleElbowPara thise=elbowp.allElbowPara[ind];
-      Elbow e=new Elbow(thise.S,thise.E,thise.O,false);
-      elbows[ind]=e;
-      // drawElbow(e);
-      // drawTorusAroundStartCircle(e);
-    }
-    CurveElbow curvebow=new CurveElbow(elbows);
-    curvebow.draw();
-    elbowp.expts.drawClosedCurve(5);
-  }
+  elbowControl elbow=new elbowControl(P);//create elbow curve object
+  elbow.curvebow.draw();//draw elbow
+  elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
 
   fill(yellow,100); P.showPicked();
 
