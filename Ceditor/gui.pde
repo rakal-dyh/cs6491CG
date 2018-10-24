@@ -26,8 +26,8 @@ void keyPressed()
   if(key=='4') {P.resetOnCircle(4,400); Q.copyFrom(P);}
   if(key=='5') {P.resetOnCircle(5,500); Q.copyFrom(P);}
   if(key=='^') track=!track;
-  if(key=='q') Q.copyFrom(P);
-  if(key=='p') P.copyFrom(Q);
+  //if(key=='q') Q.copyFrom(P);
+  //if(key=='p') P.copyFrom(Q);
   if(key==',') {level=max(level-1,0); f=0;}
   if(key=='.') {level++;f=0;}
 
@@ -67,6 +67,8 @@ void mouseMoved()
   //if (!keyPressed)
   if (keyPressed && key==' ') {rx-=PI*(mouseY-pmouseY)/height; ry+=PI*(mouseX-pmouseX)/width;};
   if (keyPressed && key=='`') dz+=(float)(mouseY-pmouseY); // approach view (same as wheel)
+  if (keyPressed && key == 's') elbow_twist += 0.1 * (mouseY - pmouseY); // twist end of one section of elbow according to user's mouse movement
+  if (keyPressed && key == 'p') ppath_twist += 0.1 * (mouseY - pmouseY); // twist end of one PPath according to user's mouse movement
   change=true;
   }
 
