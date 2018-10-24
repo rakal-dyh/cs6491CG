@@ -3,23 +3,55 @@ import java.lang.Float;
 class CurveElbow{
   Elbow[] elbows;
   float[] twist_end_angles;
-  float[] diffK;
+  //float[] diffK;
 
   CurveElbow(Elbow[] elbows){
     this.elbows=elbows;
     twist_end_angles = new float[elbows.length];
-    calculateDiffK();
-    twistForDiffK();
+    //diffK = new float[elbows.length];
+    calculate_and_twist_all_diffK();
     calculate_twist_end_angles();
   }
 
-  void calculateDiffK(){
-    int n=elbows.length;
-    diffK=new float[n];
-    diffK[0]=0.0;
-    for(int i=1;i<n;i++){
-      //diffK[i] += angle(elbows[i-1].KS,elbows[i].KS);
-      diffK[i] = diffK[i-1] + calculate_tail_head_angle(elbows[i - 1], elbows[i]);
+  void calculate_and_twist_all_diffK(){
+    //diffK[0] = 0;
+    for(int i=1;i<elbows.length;i++){
+
+      vec vec1 = elbows[i - 1].circle_vectors[elbows[i - 1].num_of_circles][0];
+      if (elbows[i - 1].isTwisted) vec1 = V(elbows[i - 1].circle_vectors_twisted[elbows[i - 1].num_of_circles][0]);
+      vec old_vec2 = elbows[i].circle_vectors[0][0];
+      if (elbows[i].isTwisted) old_vec2 = V(elbows[i].circle_vectors_twisted[0][0]);
+      
+      float curr_diffK = calculate_tail_head_angle(elbows[i - 1], elbows[i]);
+      if(curr_diffK!=curr_diffK) curr_diffK=0;
+      
+      elbows[i].twist_all(curr_diffK);
+      vec vec2 = elbows[i].circle_vectors_twisted[0][0];
+      
+      if (norm(M(vec1, vec2))>0.001) elbows[i].twist_all(-2 * curr_diffK);
+      
+      if (true) { //norm(M(vec1, vec2))>0.01) {
+        System.out.println(vec1.x + " " + vec1.y + " " + vec1.z);
+        System.out.println(old_vec2.x + " " + old_vec2.y + " " + old_vec2.z);
+        System.out.println(curr_diffK);
+        System.out.println(vec1.x + " " + vec1.y + " " + vec1.z);
+        System.out.println(vec2.x + " " + vec2.y + " " + vec2.z);
+        float new_diffK = angle(old_vec2, vec2);
+        System.out.println(new_diffK);
+        System.out.println(angle(vec1, vec2));
+        /*
+        vec1n = V(vec1).normalize();
+        old_vec2n = V(old_vec2).normalize();
+        vec1nnormal = B(vec1n, old_vec2n);
+        vec1nnormal.normalize();
+        twisted = R(old_vec2, curr_diffK, vec1n, vec1nnormal);
+        System.out.println(twisted.x + " " + twisted.y + " " + twisted.z);
+        System.out.println(angle(vec1, twisted));
+        */
+        System.out.println("-------");
+      }
+      
+      /*
       if (i==1){
         System.out.println(elbows[i-1].KS.x);
         System.out.println(elbows[i-1].KS.y);
@@ -30,13 +62,22 @@ class CurveElbow{
         System.out.println(diffK[i]);
         System.out.println('-');
       }
-
-      //System.out.println(diffK[i]);
-      if(diffK[i]!=diffK[i]) diffK[i]=0;
-
+      */
+      
+      
+      //if(diffK[i]!=diffK[i]) diffK[i]=0;
+      
     }
+    
+    /*
+    for(int i=1;i<elbows.length;i++){
+      //System.out.println(diffK[i]);
+      elbows[i].twist_all(diffK[i]);
+    }
+    */
   }
 
+  /*
   void twistForDiffK(){
     int n=elbows.length;
     for(int i=0;i<n;i++){
@@ -44,8 +85,7 @@ class CurveElbow{
       elbows[i].twist_all(diffK[i]);
     }
   }
-
-
+  */
 
   void draw(){
     for(int i=0;i<elbows.length;i++){
@@ -64,8 +104,10 @@ class CurveElbow{
   }
 
   float calculate_tail_head_angle(Elbow ea, Elbow eb) {
-    vec ea_vec = V(ea.circle_vectors[ea.num_of_circles][0]);
-    vec eb_vec = V(eb.circle_vectors[0][0]);
+    vec ea_vec = ea.circle_vectors[ea.num_of_circles][0];
+    if (ea.isTwisted) ea_vec = ea.circle_vectors_twisted[ea.num_of_circles][0];
+    vec eb_vec = eb.circle_vectors[0][0];
+    if (eb.isTwisted) eb_vec = eb.circle_vectors_twisted[0][0];
     return angle(ea_vec, eb_vec);
   }
 }

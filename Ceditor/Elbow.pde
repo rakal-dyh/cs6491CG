@@ -4,20 +4,21 @@ class Elbow {
   pt S; pt E; pt O;
   float rc;
   boolean isLine;
+  boolean isTwisted;
   int num_of_circles; int num_of_circle_vectors;
   pt[] centers;
   vec[][] circle_vectors;
   vec[][] circle_vectors_twisted;
   float length;
   color[] cls = new color[]{yellow, blue, orange, green};
-  vec KS;
 
   Elbow(pt S, pt E, pt O, boolean isLine) {
     this.S = S; this.E = E; this.O = O;
     this.rc = 20;
     this.isLine = isLine;
-    this.num_of_circles = 36;
-    this.num_of_circle_vectors = 36;
+    this.isTwisted = false;
+    this.num_of_circles = 16;
+    this.num_of_circle_vectors = 16;
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
@@ -33,7 +34,7 @@ class Elbow {
     vec SE = V(S, E);
     vec K0 = Normal(SE);
     K0 = V(rc, K0.normalize());
-    vec K0_normalized = V(K0.x, K0.y, K0.z);
+    vec K0_normalized = V(K0);
     K0_normalized.normalize();
     vec OC = N(SE, K0);
     OC.normalize();
@@ -57,14 +58,13 @@ class Elbow {
 
   void calculateFields() {
     vec OS = V(O, S);
-    vec OS_normalized = V(OS.x, OS.y, OS.z);
+    vec OS_normalized = V(OS);
     OS_normalized.normalize();
     vec OE = V(O, E);
     vec K0 = N(OS, OE);
     K0 = V(20, K0.normalize());
-    vec K0_normalized = V(K0.x, K0.y, K0.z);
+    vec K0_normalized = V(K0);
     K0_normalized.normalize();
-    KS = K0_normalized;
     vec OS_normal_in_OSE = B(OS, OE); // in plane O, S, E and orthogonal to OS
     OS_normal_in_OSE.normalize();
 
@@ -86,6 +86,7 @@ class Elbow {
       }
       circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
     }
+    
   }
 
   void twist_all(float t) { twist(t, t); }
@@ -94,26 +95,31 @@ class Elbow {
 
   void twist(float head, float tail) {
     for (int i = 0; i <= num_of_circles; i++) {
+      vec[][] target_vectors = circle_vectors;
+      if (isTwisted) target_vectors = circle_vectors_twisted;
       vec bak_1 = circle_vectors[i][0];
       vec bak_2 = circle_vectors[i][num_of_circle_vectors / 4];
-      vec bak_1_normalized = V(bak_1.x, bak_1.y, bak_1.z).normalize();
-      vec bak_2_normalized = V(bak_2.x, bak_2.y, bak_2.z).normalize();
+      vec bak_1_normalized = V(bak_1).normalize();
+      vec bak_2_normalized = V(bak_2).normalize();
+      
       for (int j = 0; j < num_of_circle_vectors; j++) {
         float difference = tail - head;
-        circle_vectors_twisted[i][j] = R(circle_vectors[i][j], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
+        circle_vectors_twisted[i][j] = R(target_vectors[i][j], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
       }
       circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
     }
+    if (!isTwisted) isTwisted = true;
   }
 }
 
 void drawElbow(Elbow e) {
+  int num_of_vectors_in_strip = e.num_of_circle_vectors / 4;
+  vec[][] circle_vectors = e.circle_vectors_twisted;
+  if (!e.isTwisted) circle_vectors = e.circle_vectors;
   for (int i = 0; i < 4; i++) {
     fill(e.cls[i]);
+    int start_index = i * num_of_vectors_in_strip;
     for (int j = 0; j < e.num_of_circles; j++) {
-      int num_of_vectors_in_strip = e.num_of_circle_vectors / 4;
-      int start_index = i * num_of_vectors_in_strip;
-      vec[][] circle_vectors = e.circle_vectors_twisted;
       for (int k = start_index; k < start_index + num_of_vectors_in_strip; k++) {
         pt A = P(e.centers[j], circle_vectors[j][k]);
         pt B = P(e.centers[j], circle_vectors[j][k + 1]);
@@ -182,8 +188,8 @@ class PPath {
     for (int i = 0; i <= num_of_circles; i++) {
       vec bak_1 = circle_vectors[i];
       vec bak_2 = circle_vectors_normal[i];
-      vec bak_1_normalized = V(bak_1.x, bak_1.y, bak_1.z).normalize();
-      vec bak_2_normalized = V(bak_2.x, bak_2.y, bak_2.z).normalize();
+      vec bak_1_normalized = V(bak_1).normalize();
+      vec bak_2_normalized = V(bak_2).normalize();
       float difference = tail - head;
       circle_vectors[i] = R(circle_vectors[i], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
     }
