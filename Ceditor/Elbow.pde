@@ -11,6 +11,7 @@ class Elbow {
   vec[][] circle_vectors_twisted;
   float length;
   color[] cls = new color[]{yellow, blue, orange, green};
+  vec KS;
   
   Elbow(pt S, pt E, pt O, boolean isLine) {
     this.S = S; this.E = E; this.O = O;
@@ -64,6 +65,7 @@ class Elbow {
     K0 = V(20, K0.normalize());
     vec K0_normalized = V(K0.x, K0.y, K0.z);
     K0_normalized.normalize();
+    KS = K0_normalized;
     vec OS_normal_in_OSE = B(OS, OE); // in plane O, S, E and orthogonal to OS
     OS_normal_in_OSE.normalize();
     
