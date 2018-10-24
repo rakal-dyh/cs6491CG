@@ -19,7 +19,7 @@ class CurveElbow{
     diffK[0]=0.0;
     for(int i=1;i<n;i++){
       //diffK[i] += angle(elbows[i-1].KS,elbows[i].KS);
-      diffK[i] += calculate_tail_head_angle(elbows[i - 1], elbows[i]);
+      diffK[i] = diffK[i-1] + calculate_tail_head_angle(elbows[i - 1], elbows[i]);
       if (i==1){
         System.out.println(elbows[i-1].KS.x);
         System.out.println(elbows[i-1].KS.y);
@@ -53,7 +53,7 @@ class CurveElbow{
       if (i==0) drawTorusAroundStartCircle(elbows[i]);
     }
   }
-  
+
   void calculate_twist_end_angles() {
     float total_twist_end_angles = calculate_tail_head_angle(elbows[elbows.length - 1], elbows[0]);
     float total_length = 0;
@@ -62,7 +62,7 @@ class CurveElbow{
       twist_end_angles[i] = total_twist_end_angles * elbows[i].length / total_length;
     }
   }
-  
+
   float calculate_tail_head_angle(Elbow ea, Elbow eb) {
     vec ea_vec = V(ea.circle_vectors[ea.num_of_circles][0]);
     vec eb_vec = V(eb.circle_vectors[0][0]);
