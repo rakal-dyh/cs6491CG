@@ -78,7 +78,6 @@ class Elbow {
         OC = R(OS, i * d_alpha, OS_normalized, OS_normal_in_OSE);
       pt C = P(O, OC);
       centers[i] = C;
-      if (i == num_of_circles / 2) System.out.println("C: " + C.x + " " + C.y + " " + C.z);
       OC.normalize();
       for (int j = 0; j < num_of_circle_vectors; j++) {
         vec K = R(K0, j * d_beta, K0_normalized, OC);
@@ -88,28 +87,21 @@ class Elbow {
     }
   }
   
-  void twist_all(float t) {
-    for (int i = 0; i <= num_of_circles; i++) {
-      vec bak_1 = circle_vectors[i][0];
-      vec bak_2 = circle_vectors[i][num_of_circle_vectors / 4];
-      vec bak_1_normalized = V(bak_1.x, bak_1.y, bak_1.z).normalize();
-      vec bak_2_normalized = V(bak_2.x, bak_2.y, bak_2.z).normalize();
-      for (int j = 0; j < num_of_circle_vectors; j++) {
-        circle_vectors[i][j] = R(circle_vectors[i][j], t, bak_1_normalized, bak_2_normalized);
-      }
-      circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
-    }
-  }
+  void twist_all(float t) { twist(t, t); }
   
-  void twist_end(float t) {
-    isTwisted = true;
+  void twist_end(float t) { twist(0, t); }
+  
+  void twist(float head, float tail) {
+    if (head != tail)
+      isTwisted = true;
     for (int i = 0; i <= num_of_circles; i++) {
       vec bak_1 = circle_vectors[i][0];
       vec bak_2 = circle_vectors[i][num_of_circle_vectors / 4];
       vec bak_1_normalized = V(bak_1.x, bak_1.y, bak_1.z).normalize();
       vec bak_2_normalized = V(bak_2.x, bak_2.y, bak_2.z).normalize();
       for (int j = 0; j < num_of_circle_vectors; j++) {
-        circle_vectors_twisted[i][j] = R(circle_vectors[i][j], (float) i * t / num_of_circles, bak_1_normalized, bak_2_normalized);
+        float difference = tail - head;
+        circle_vectors_twisted[i][j] = R(circle_vectors[i][j], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
       }
       circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
     }
@@ -152,29 +144,52 @@ class PPath {
   int num_of_circles; int num_of_circle_vectors;
   pt[] centers;
   vec[] circle_vectors;
-  pt start;
+  vec[] circle_vectors_normal;
   
-  PPath(Elbow e, pt start) {
+  PPath(Elbow e, int start_index) {
     this.O = e.O;
+    this.rc = e.rc;
     this.isLine = e.isLine;
     this.num_of_circles = e.num_of_circles;
     this.num_of_circle_vectors = e.num_of_circle_vectors;
     this.centers = Arrays.copyOf(e.centers, e.centers.length);
     this.circle_vectors = new vec[num_of_circles + 1];
-    this.start = start;
+    this.circle_vectors_normal = new vec[num_of_circles + 1];
+    for (int i = 0; i < e.centers.length; i++) {
+      this.circle_vectors[i] = e.circle_vectors[i][start_index];
+      this.circle_vectors_normal[i] = e.circle_vectors[i][start_index + num_of_circle_vectors / 4];
+    }
   }
   
   PPath(Elbow e) {
     this.O = e.O;
+    this.rc = e.rc;
     this.isLine = e.isLine;
     this.num_of_circles = e.num_of_circles;
     this.num_of_circle_vectors = e.num_of_circle_vectors;
     this.centers = Arrays.copyOf(e.centers, e.centers.length);
     this.circle_vectors = new vec[num_of_circles + 1];
-    this.start = P(e.centers[0], e.circle_vectors[0][0]);
+    this.circle_vectors_normal = new vec[num_of_circles + 1];
+    for (int i = 0; i < e.centers.length; i++) {
+      this.circle_vectors[i] = e.circle_vectors[i][0];
+      this.circle_vectors_normal[i] = e.circle_vectors[i][num_of_circle_vectors / 4];
+    }
   }
   
+  void twist_all(float t) { twist(t, t); }
   
+  void twist_end(float t) { twist(0, t); }
+  
+  void twist(float head, float tail) {
+    for (int i = 0; i <= num_of_circles; i++) {
+      vec bak_1 = circle_vectors[i];
+      vec bak_2 = circle_vectors_normal[i];
+      vec bak_1_normalized = V(bak_1.x, bak_1.y, bak_1.z).normalize();
+      vec bak_2_normalized = V(bak_2.x, bak_2.y, bak_2.z).normalize();
+      float difference = tail - head;
+      circle_vectors[i] = R(circle_vectors[i], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
+    }
+  }
 }
 
 void drawP(PPath ppath) {
