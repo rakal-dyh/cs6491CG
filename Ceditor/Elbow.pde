@@ -17,8 +17,8 @@ class Elbow {
     this.rc = 20;
     this.isLine = isLine;
     this.isTwisted = false;
-    this.num_of_circles = 16;
-    this.num_of_circle_vectors = 16;
+    this.num_of_circles = 36;
+    this.num_of_circle_vectors = 36;
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
@@ -28,6 +28,10 @@ class Elbow {
 
     if (this.isLine) calculateFieldsLine();
     else calculateFields();
+  }
+  
+  Elbow() {
+    
   }
 
   void calculateFieldsLine() {
@@ -110,6 +114,24 @@ class Elbow {
     }
     if (!isTwisted) isTwisted = true;
   }
+}
+
+Elbow E(Elbow e) {
+  Elbow result = new Elbow();
+  result.S = e.S; result.E = e.E; result.O = e.O;
+  result.rc = e.rc;
+  result.isLine = e.isLine;
+  result.isTwisted = e.isTwisted;
+  result.num_of_circles = e.num_of_circles; result.num_of_circle_vectors = e.num_of_circle_vectors;
+  result.centers = Arrays.copyOf(e.centers, e.centers.length);
+  result.circle_vectors = new vec[e.circle_vectors.length][e.circle_vectors[0].length];
+  result.circle_vectors_twisted = new vec[e.circle_vectors_twisted.length][e.circle_vectors_twisted[0].length];
+  for (int i = 0; i < e.circle_vectors.length; i++) {
+    result.circle_vectors[i] = Arrays.copyOf(e.circle_vectors[i], e.circle_vectors[i].length);
+    result.circle_vectors_twisted[i] = Arrays.copyOf(e.circle_vectors_twisted[i], e.circle_vectors_twisted[i].length);
+  }
+  result.length = e.length;
+  return result;
 }
 
 void drawElbow(Elbow e) {
