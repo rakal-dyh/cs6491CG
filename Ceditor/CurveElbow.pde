@@ -2,20 +2,15 @@ import java.lang.Float;
 
 class CurveElbow{
   Elbow[] elbows;
-<<<<<<< HEAD
   float[] twist_end_angles;
-  
-  CurveElbow(Elbow[] elbows){
-    this.elbows=elbows;
-    twist_end_angles = new float[elbows.length];
-=======
   float[] diffK;
 
   CurveElbow(Elbow[] elbows){
     this.elbows=elbows;
+    twist_end_angles = new float[elbows.length];
     calculateDiffK();
     twistForDiffK();
->>>>>>> e219cd026cd33287c2e66fed9f144d8791fe7a7d
+    calculate_twist_end_angles();
   }
 
   void calculateDiffK(){
