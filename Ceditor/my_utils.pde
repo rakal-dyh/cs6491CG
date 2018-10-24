@@ -24,7 +24,21 @@ class InterpolationWithTwoDMethod{
     this.vb.x=-this.vb.x;
     this.vb.y=-this.vb.y;
     this.vb.z=-this.vb.z;
+
+    // B.x+=0.000001;
+    // B.y+=0.000001;
+    // B.z+=0.000001;
+    // this.vb.x=this.vb.x;
+    // this.vb.y=this.vb.y;
+    // this.vb.z=this.vb.z;
+    // if (va.x-vb.x==0 && va.y-vb.y==0 && va.z-vb.z==0){
+    //   AA=P();BB=P();O1=P();O2=P();isLine1=true;isLine2=true;C=A;vc=va;d=0;
+    // }
+    // else{
+    //   calculate();
+    // }
     calculate();
+
   }
   void calculate(){
     float a;
@@ -38,17 +52,26 @@ class InterpolationWithTwoDMethod{
     b=2*((va.x-vb.x)*(A.x-B.x)+(va.y-vb.y)*(A.y-B.y)+(va.z-vb.z)*(A.z-B.z));
     c=(A.x-B.x)*(A.x-B.x)+(A.y-B.y)*(A.y-B.y)+(A.z-B.z)*(A.z-B.z);
 
-
     //d=(-b+(b*b-4*a*c)^0.5)/(2*a);
     d=(-b-sqrt(b*b-4*a*c))/(2*a);
+    if (a==0){
+      System.out.println("000!!!");
+      d=0;
+    }
+    // System.out.println(d);
+    // System.out.println(a);
+    // char qq='-';
+    // System.out.println(qq);
     this.AA=P(A,V(d,va));
     this.BB=P(B,V(d,vb));
     vc=U(V(AA,BB));
+    vec vc2=V(-1,vc);
     C=P(AA,0.5,BB);
+
     vec vna=B(va,vc);//norm to va in va,vc plain
-    vec vnb=B(vb,vc);
+    vec vnb=B(vb,vc2);
     vec vnc1=B(vc,va);
-    vec vnc2=B(vc,vb);
+    vec vnc2=B(vc2,vb);
 
     vec vac=V(A,C);
     vec vca=V(C,A);
@@ -93,6 +116,13 @@ class findCircleCenter{
   float r;
 
   findCircleCenter(vec vna,vec vnc,pt A,pt C,pt AA,float d){
+    // System.out.println(angle(vna,vnc));
+    // System.out.println(vna.x);
+    // System.out.println(vna.y);
+    // System.out.println(vna.z);
+    // System.out.println(vnc.x);
+    // System.out.println(vnc.y);
+    // System.out.println(vnc.z);
     float xav=vna.x;
     float yav=vna.y;
     float zav=vna.z;
@@ -106,13 +136,22 @@ class findCircleCenter{
     float xc=C.x;
     float yc=C.y;
     float zx=C.z;
-    float test=abs(xcv)-abs(xav)+abs(ycv)-abs(yav)+abs(zcv)-abs(zav);
-    if (test<0.0001){
+    //float test=abs(xcv)-abs(xav)+abs(ycv)-abs(yav)+abs(zcv)-abs(zav);
+    // if (test<0.00000001){
+    //   this.isLine=true;
+    // }
+    // else{
+    //   this.isLine=false;
+    // }
+    if (vna.x==0 && vna.y==0 && vna.z==0 && vnc.x==0 && vnc.y==0 && vnc.z==0){
       this.isLine=true;
     }
     else{
       this.isLine=false;
     }
+
+
+    //this.isLine=false;
     this.r=0;
     this.O=P();
     if (!isLine){
@@ -184,6 +223,12 @@ class elbowPara{
       pt B=getNext(i,points,pointsNum);
       vec va=V(getPrevious(i,points,pointsNum),B);
       vec vb=V(A,getNext2(i,points,pointsNum));
+      // System.out.println(va.x);
+      // System.out.println(va.y);
+      // System.out.println(va.z);
+      // System.out.println(vb.x);
+      // System.out.println(vb.y);
+      // System.out.println(vb.z);
       InterpolationWithTwoDMethod tmpElbow=new InterpolationWithTwoDMethod(A,B,va,vb);
       //singleElbowPara elbow1=new singleElbowPara(tmpElbow.A,tmpElbow.C,tmpElbow.O1,tmpElbow.isLine1);
       //singleElbowPara elbow2=new singleElbowPara(tmpElbow.C,tmpElbow.B,tmpElbow.O2,tmpElbow.isLine2);
@@ -194,6 +239,8 @@ class elbowPara{
       extendPoints[2*i]=allElbowPara[2*i].S;
       extendPoints[2*i+1]=allElbowPara[2*i+1].S;
       v[i]=va;
+      //System.out.println(allElbowPara[2*i].S);
+      //System.out.println(allElbowPara[2*i+1].S);
     }
     expts=new pts();
     expts.declare();
