@@ -171,24 +171,33 @@ class elbowControl{
 
   //construction method which will call main function
   elbowControl(pts initialPts){
-    mainDo(initialPts,0,0);
+    mainDo(initialPts,0,0,true,true);
 
   }
 
-  void mainDo(pts initialPts,int vecMethod, int subdivisionMethod){
+  //first parameter: fixed, the pts given from gui
+  //second parameter: decide whether using subdivision for pts from gui,
+  //  0 - default, no subdivision
+  //third parameter: decide the method to calculate the vec for each vertices
+  //  0 - default, using the previous and next pt to calcualte vec, ex: for A,B,C vec(B)=V(A,C)
+  //  1 - used for non closed curve, the first point and last point will use different way with method 0, ex: for A,B, vec(A)=V(A,B)
+  //forth parameter: true - closed curver
+  //fifth parameter: ture - head tail twisted to connected.
+  void mainDo(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead){
     pt[] points=pointsNoOverlapped(initialPts);//from pts to pt[], remove overlapped points
+
     if (subdivisionMethod==0) this.inputPoints=subdivision_default(points);//subdivision, signal=0 means no subdivision
-    if (vecMethod==0) this.verticesVec=createVec_default(points);//create vertives vec, signal=0 means default method
-
     int len=this.inputPoints.length;
-    this.extendPoints=new pt[2*len];
-    this.elbows=new Elbow[2*len];
 
-    //get elbows calculated
-    elbows=calculateElbows();
+    if (vecMethod==0) this.verticesVec=createVec_default(this.inputPoints);//create vertives vec, signal=0 means default method
+    if (vecMethod==1) this.verticesVec=createVec_FrontEndNoConnection(this.inputPoints);
+
+    this.extendPoints=new pt[2*len];
+    this.elbows=calculateElbowsPCC();
     extendPolygon=getExtendPolygon();
 
-    this.curvebow=new CurveElbow(elbows);
+    //make curve, twist involed
+    this.curvebow=new CurveElbow(this.elbows,connectTailHead,alignTailHead);
   }
 
   //preprocess,change from pts to pt[], with duplicate point removed
@@ -234,9 +243,20 @@ class elbowControl{
     return returnVec;
   }
 
+  vec[] createVec_FrontEndNoConnection(pt[] inputPoints){
+    int len=inputPoints.length;
+    vec[] returnVec=new vec[len];
+    for (int i=0;i<len;i++){
+      if (i==0){returnVec[i]=V(inputPoints[i],getNext(i,inputPoints,len));continue;}
+      if (i==len-1){returnVec[i]=V(getPrevious(i,inputPoints,len),inputPoints[i]);continue;}
+      returnVec[i]=V(getPrevious(i,inputPoints,len),getNext(i,inputPoints,len));
+    }
+    return returnVec;
+  }
 
 
-  Elbow[] calculateElbows(){
+
+  Elbow[] calculateElbowsPCC(){
     int n=this.inputPoints.length;
     Elbow[] elbows=new Elbow[2*n];
     for(int i=0;i<n;i++){

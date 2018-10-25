@@ -1,4 +1,4 @@
-void keyPressed() 
+void keyPressed()
   {
 //  if(key=='`') picking=true;
   if(key=='?') scribeText=!scribeText;
@@ -56,6 +56,9 @@ void mousePressed()
   //if (!keyPressed) picking=true;
   if (!keyPressed) {P.set_pv_to_pp(); println("picked vertex "+P.pp);}
   if(keyPressed && key=='a') {P.addPt(Of);}
+  if(keyPressed && key=='q') {PC.set_pv_to_pp();
+                              println("first circle picked vertex "+PC.pp);
+                              lastChoosePC=PC.pp;}
 //  if(keyPressed && (key=='f' || key=='s' || key=='b' || key=='c')) {P.addPt(Of,key);}
 
  // if (!keyPressed) P.setPicked();

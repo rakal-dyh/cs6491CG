@@ -28,6 +28,9 @@ pts P = new pts(); // polyloop in 3D
 pts Q = new pts(); // second polyloop in 3D
 pts R = new pts(); // inbetweening polyloop L(P,t,Q);
 
+pts PC = new pts();//point on circle aournd the beginning of first elbow
+int lastChoosePC;//the point selected on PC last time
+
 float elbow_twist;
 float ppath_twist;
 
@@ -39,6 +42,10 @@ void setup() {
   P.declare(); Q.declare(); R.declare(); // P is a polyloop in 3D: declared in pts
   //P.resetOnCircle(6,100); Q.copyFrom(P); // use this to get started if no model exists on file: move points, save to file, comment this line
   P.loadPts("data/pts");  Q.loadPts("data/pts2"); // loads saved models from file (comment out if they do not exist yet)
+
+  PC.declare();
+  lastChoosePC=0;
+
   noSmooth();
   frameRate(30);
   }
@@ -72,6 +79,11 @@ void draw() {
   elbowControl elbow=new elbowControl(P);//create elbow curve object
   elbow.curvebow.draw();//draw elbow
   elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
+
+  PC=elbow.curvebow.startCircle;
+  PC.pv=lastChoosePC;
+  PC.SETppToIDofVertexWithClosestScreenProjectionTo(Mouse());
+  fill(black); PC.showPicked(8);
 
   fill(yellow,100); P.showPicked();
 
