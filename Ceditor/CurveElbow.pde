@@ -6,11 +6,13 @@ class CurveElbow{
   PPath[] ppaths;
   boolean connectTailHead;
   boolean alignTailHead;
+  boolean drawPPath;
   pts startCircle;
 
-  CurveElbow(Elbow[] elbows, boolean connectTailHead, boolean alignTailHead){
+  CurveElbow(Elbow[] elbows, boolean connectTailHead, boolean alignTailHead, boolean drawPPath){
     this.connectTailHead = connectTailHead;
     this.elbows=elbows;
+    this.drawPPath = drawPPath;
     startCircle = new pts();
     startCircle.declare();
     
@@ -25,20 +27,32 @@ class CurveElbow{
     initStartCircle();
     
     ppaths = new PPath[elbows.length];
-    set_up_and_align_ppaths(0);
+    set_up_and_align_ppaths(PC.pv);
   }
   
   void initStartCircle() {
-    for (int i = 0; i < elbows[0].circle_vectors[0].length; i++)
+    for (int i = 0; i < elbows[0].num_of_circle_vectors; i++)
       startCircle.addPt(P(elbows[0].centers[0], elbows[0].circle_vectors[0][i]));
   }
   
   void set_up_and_align_ppaths(int start_index) {
-    for (int i = 0; i < elbows.length; i++) {
+    for (int i = 0; i < elbows.length; i++)
       ppaths[i] = new PPath(elbows[i], start_index);
-    }
     
+    for (int i = 1; i < ppaths.length; i++)
+      twist_adjacent_ppath(ppaths[i - 1], ppaths[i]);
+  }
+  
+  void twist_adjacent_ppath(PPath p1, PPath p2) {
+    float curr_diffK = calculate_tail_head_angle(p1, p2);
+    if(curr_diffK != curr_diffK) curr_diffK = 0;
+    PPath p2_copy = PP(p2);
+    p2_copy.twist_all(curr_diffK);
+    vec vec1 = p1.circle_vectors[p1.num_of_circles];
+    vec vec2 = p2_copy.circle_vectors[0];
     
+    if (norm(M(vec1, vec2))>0.001) p2.twist_all(-curr_diffK);
+    else p2.twist_all(curr_diffK);
   }
 
   void calculate_and_twist_all_diffK(){
@@ -99,11 +113,17 @@ class CurveElbow{
   void draw(){
     drawTorusAroundStartCircle(elbows[0]);
     if (connectTailHead) {
-      for(int i = 0; i < elbows.length; i++)
+      for(int i = 0; i < elbows.length; i++) {
         drawElbow(elbows[i]);
+        if (drawPPath)
+          drawP(ppaths[i]);
+      }
     } else {
-      for(int i = 0; i < elbows.length - 2; i++)
+      for(int i = 0; i < elbows.length - 2; i++) {
         drawElbow(elbows[i]);
+        if (drawPPath)
+          drawP(ppaths[i]);
+      }
     }
   }
 
@@ -163,5 +183,11 @@ class CurveElbow{
     vec eb_vec = eb.circle_vectors[0][0];
     if (eb.isTwisted) eb_vec = eb.circle_vectors_twisted[0][0];
     return angle(ea_vec, eb_vec);
+  }
+  
+  float calculate_tail_head_angle(PPath p1, PPath p2) {
+    vec p1_vec = p1.circle_vectors[p1.num_of_circles];
+    vec p2_vec = p2.circle_vectors[0];
+    return angle(p1_vec, p2_vec);
   }
 }
