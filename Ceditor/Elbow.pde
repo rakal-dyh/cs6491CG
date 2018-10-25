@@ -183,7 +183,10 @@ class PPath {
     this.circle_vectors_normal = new vec[num_of_circles + 1];
     for (int i = 0; i < e.centers.length; i++) {
       this.circle_vectors[i] = e.circle_vectors[i][start_index];
-      this.circle_vectors_normal[i] = e.circle_vectors[i][start_index + num_of_circle_vectors / 4];
+      if (start_index > 3 * num_of_circle_vectors / 4)
+        this.circle_vectors_normal[i] = e.circle_vectors[i][start_index - 3 * num_of_circle_vectors / 4];
+      else
+        this.circle_vectors_normal[i] = e.circle_vectors[i][start_index + num_of_circle_vectors / 4];
     }
   }
 

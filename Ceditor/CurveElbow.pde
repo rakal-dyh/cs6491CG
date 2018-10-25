@@ -3,13 +3,42 @@ import java.lang.Float;
 class CurveElbow{
   Elbow[] elbows;
   float[] twist_end_angles;
+  PPath[] ppaths;
+  boolean connectTailHead;
+  boolean alignTailHead;
+  pts startCircle;
 
-  CurveElbow(Elbow[] elbows){
+  CurveElbow(Elbow[] elbows, boolean connectTailHead, boolean alignTailHead){
+    this.connectTailHead = connectTailHead;
     this.elbows=elbows;
+    startCircle = new pts();
+    startCircle.declare();
+    
     twist_end_angles = new float[elbows.length];
     calculate_and_twist_all_diffK();
-    calculate_twist_end_angles();
-    twist_end_angles();
+    
+    if (alignTailHead) {
+      calculate_twist_end_angles();
+      twist_end_angles();
+    }
+    
+    initStartCircle();
+    
+    ppaths = new PPath[elbows.length];
+    set_up_and_align_ppaths(0);
+  }
+  
+  void initStartCircle() {
+    for (int i = 0; i < elbows[0].circle_vectors[0].length; i++)
+      startCircle.addPt(P(elbows[0].centers[0], elbows[0].circle_vectors[0][i]));
+  }
+  
+  void set_up_and_align_ppaths(int start_index) {
+    for (int i = 0; i < elbows.length; i++) {
+      ppaths[i] = new PPath(elbows[i], start_index);
+    }
+    
+    
   }
 
   void calculate_and_twist_all_diffK(){
@@ -68,9 +97,13 @@ class CurveElbow{
   }
 
   void draw(){
-    for(int i=0;i<elbows.length;i++){
-      drawElbow(elbows[i]);
-      if (i==0) drawTorusAroundStartCircle(elbows[i]);
+    drawTorusAroundStartCircle(elbows[0]);
+    if (connectTailHead) {
+      for(int i = 0; i < elbows.length; i++)
+        drawElbow(elbows[i]);
+    } else {
+      for(int i = 0; i < elbows.length - 2; i++)
+        drawElbow(elbows[i]);
     }
   }
 
@@ -94,7 +127,7 @@ class CurveElbow{
       twist_end_angles[i] = total_twist_end_angles * elbows[i].length / total_length;
       if (twist_end_angles[i] != twist_end_angles[i]) twist_end_angles[i] = 0;
     }
-    System.out.println(Arrays.toString(twist_end_angles));
+    //System.out.println(Arrays.toString(twist_end_angles));
   }
   
   void twist_end_angles() {
