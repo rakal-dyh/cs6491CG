@@ -171,6 +171,8 @@ class PPath {
   pt[] centers;
   vec[] circle_vectors;
   vec[] circle_vectors_normal;
+  
+  PPath() {}
 
   PPath(Elbow e, int start_index) {
     this.O = e.O;
@@ -219,6 +221,18 @@ class PPath {
       circle_vectors[i] = R(circle_vectors[i], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
     }
   }
+}
+
+PPath PP(PPath p) {
+  PPath result = new PPath();
+  result.O = p.O;
+  result.rc = p.rc;
+  result.num_of_circles = p.num_of_circles;
+  result.num_of_circle_vectors = p.num_of_circle_vectors;
+  result.centers = Arrays.copyOf(p.centers, p.centers.length);
+  result.circle_vectors = Arrays.copyOf(p.circle_vectors, p.circle_vectors.length);
+  result.circle_vectors_normal = Arrays.copyOf(p.circle_vectors_normal, p.circle_vectors_normal.length);
+  return result;
 }
 
 void drawP(PPath ppath) {
