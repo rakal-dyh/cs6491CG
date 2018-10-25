@@ -27,7 +27,7 @@ class CurveElbow{
     initStartCircle();
     
     ppaths = new PPath[elbows.length];
-    set_up_and_align_ppaths(0);
+    set_up_and_align_ppaths(PC.pv);
   }
   
   void initStartCircle() {

@@ -154,9 +154,9 @@ void drawElbow(Elbow e) {
 }
 
 void drawTorusAroundStartCircle(Elbow e) {
-  float rp = e.rc / 3;
+  float rp = e.rc / 5;
   for (int i = 0; i < e.num_of_circle_vectors; i++) {
-    fill(black);
+    fill(black, 100);
     pt A = P(e.centers[0], e.circle_vectors[0][i]);
     pt B = P(e.centers[0], e.circle_vectors[0][i + 1]);
     cylinderSection(A, B, rp);
