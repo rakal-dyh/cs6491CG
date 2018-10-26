@@ -171,7 +171,7 @@ class elbowControl{
 
   //construction method which will call main function
   elbowControl(pts initialPts){
-    mainDo(initialPts,0,0,true,true);
+    mainDo(initialPts,0,0,true,true,true);
 
   }
 
@@ -183,7 +183,8 @@ class elbowControl{
   //  1 - used for non closed curve, the first point and last point will use different way with method 0, ex: for A,B, vec(A)=V(A,B)
   //forth parameter: true - closed curver
   //fifth parameter: ture - head tail twisted to connected.
-  void mainDo(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead){
+  //sixth parameter: ture - plot ppath
+  void mainDo(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead,boolean drawPPath){
     pt[] points=pointsNoOverlapped(initialPts);//from pts to pt[], remove overlapped points
 
     if (subdivisionMethod==0) this.inputPoints=subdivision_default(points);//subdivision, signal=0 means no subdivision
@@ -197,7 +198,7 @@ class elbowControl{
     extendPolygon=getExtendPolygon();
 
     //make curve, twist involed
-    this.curvebow=new CurveElbow(this.elbows,connectTailHead,alignTailHead);
+    this.curvebow=new CurveElbow(this.elbows,connectTailHead,alignTailHead,drawPPath);
   }
 
   //preprocess,change from pts to pt[], with duplicate point removed
