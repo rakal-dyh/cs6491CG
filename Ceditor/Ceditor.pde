@@ -46,6 +46,9 @@ void setup() {
   PC.declare();
   lastChoosePC=0;
 
+  multiPointsMotion2D MPM=new multiPointsMotion2D();
+  int numOfPeriods=4;
+
   noSmooth();
   frameRate(30);
   }
@@ -78,7 +81,7 @@ void draw() {
 
   elbowControl elbow=new elbowControl(P);//create elbow curve object
   elbow.curvebow.draw();//draw elbow
-  elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
+  //elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
 
   PC=elbow.curvebow.startCircle;
   PC.pv=lastChoosePC;
