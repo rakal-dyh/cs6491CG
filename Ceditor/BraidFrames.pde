@@ -46,6 +46,7 @@ class CurveBraidFrames {
   int methodId;
   int numOfBraids;
   multiPointsMotion2D MPM;
+  int numOfPeriods;
   
   // for each elbow in CurveElbow create ElbowBraidFrames
   // for each ElbowBraidFrames
@@ -53,13 +54,13 @@ class CurveBraidFrames {
   //         calculate real time for it
   //         get coods for all points inside
   //         set coods for this Frame
-  CurveBraidFrames(CurveElbow ce, multiPointsMotion2D MPM, int methodId, int numOfPeriod) {
+  CurveBraidFrames(CurveElbow ce, multiPointsMotion2D MPM, int methodId, int numOfPeriods) {
     getLengths(ce);
     setUpElbowBraidFrames(ce);
     this.MPM = MPM;
     this.methodId = methodId;
     numOfBraids = MPM.methodNumPoints(methodId);
-    this.numOfPeriod = numOfPeriod;
+    this.numOfPeriods = numOfPeriods;
   }
   
   void setUpElbowBraidFrames(CurveElbow ce) {
