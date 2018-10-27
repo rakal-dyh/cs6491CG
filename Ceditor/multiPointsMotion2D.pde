@@ -267,9 +267,9 @@ class multiPointsMotion2D{
     this.cood[7]=returnAngle(b2);
   }
 
-  void method3(float){
+  void method3(float t){
     this.num=1;
-    this.radius=0.5;
+    this.radius=0.3;
     this.cood=new float[2*this.num];
 
     pt A=P(0.75,0.0);

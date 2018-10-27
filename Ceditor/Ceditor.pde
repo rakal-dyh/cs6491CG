@@ -50,7 +50,7 @@ void setup() {
   lastChoosePC=0;
 
   MPM=new multiPointsMotion2D();
-  numOfPeriods=10;
+  numOfPeriods=20;
 
   noSmooth();
   frameRate(30);
@@ -88,7 +88,7 @@ void draw() {
 
   //-----------
   //draw braids
-  CurveBraidFrames cbf = new CurveBraidFrames(elbow.curvebow, MPM, 0, numOfPeriods);
+  CurveBraidFrames cbf = new CurveBraidFrames(elbow.curvebow, MPM, 3, numOfPeriods);
   cbf.draw();
 
 
