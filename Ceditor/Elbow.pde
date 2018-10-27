@@ -17,8 +17,8 @@ class Elbow {
     this.rc = 20;
     this.isLine = isLine;
     this.isTwisted = false;
-    this.num_of_circles = 64;
-    this.num_of_circle_vectors = 64;
+    this.num_of_circles = 16;
+    this.num_of_circle_vectors = 8;
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
@@ -31,9 +31,9 @@ class Elbow {
     else calculateFields();
   }
 
-  Elbow(pt S, pt E, pt O, boolean isLine, int num_of_circles, int num_of_circle_vectors) {
+  Elbow(pt S, pt E, pt O, boolean isLine, int num_of_circles, int num_of_circle_vectors, float rc) {
     this.S = S; this.E = E; this.O = O;
-    this.rc = 20;
+    this.rc = rc;
     this.isLine = isLine;
     this.isTwisted = false;
     this.num_of_circles = num_of_circles;
@@ -86,7 +86,7 @@ class Elbow {
     OS_normalized.normalize();
     vec OE = V(O, E);
     vec K0 = N(OS, OE);
-    K0 = V(20, K0.normalize());
+    K0 = V(rc, K0.normalize());
     vec K0_normalized = V(K0);
     K0_normalized.normalize();
     vec OS_normal_in_OSE = B(OS, OE); // in plane O, S, E and orthogonal to OS
@@ -107,8 +107,10 @@ class Elbow {
       for (int j = 0; j < num_of_circle_vectors; j++) {
         vec K = R(K0, j * d_beta, K0_normalized, OC);
         circle_vectors[i][j] = K;
+        circle_vectors_twisted[i][j] = K;
       }
       circle_vectors[i][num_of_circle_vectors] = circle_vectors[i][0];
+      circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
     }
     
   }
@@ -128,7 +130,7 @@ class Elbow {
       
       for (int j = 0; j < num_of_circle_vectors; j++) {
         float difference = tail - head;
-        circle_vectors[i][j] = R(target_vectors[i][j], head, bak_1_normalized, bak_2_normalized);
+        //circle_vectors[i][j] = R(target_vectors[i][j], head, bak_1_normalized, bak_2_normalized);
         circle_vectors_twisted[i][j] = R(target_vectors[i][j], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
       }
       circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];

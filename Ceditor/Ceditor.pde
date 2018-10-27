@@ -50,7 +50,7 @@ void setup() {
   lastChoosePC=0;
 
   MPM=new multiPointsMotion2D();
-  numOfPeriods=20;
+  numOfPeriods=10;
 
   noSmooth();
   frameRate(30);
@@ -82,16 +82,14 @@ void draw() {
   if(showControl) {fill(grey); P.drawClosedCurve(3);}  // draw control polygon
 
 
-  elbowControl elbow=new elbowControl(P);//create elbow curve object
+  elbowControl elbow=new elbowControl(P, 16, 4, 32);//create elbow curve object
   //elbow.curvebow.draw();//draw elbow
   //elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
 
   //-----------
   //draw braids
-  CurveBraidFrames cbf = new CurveBraidFrames(elbow.curvebow, MPM, 3, numOfPeriods);
-  cbf.draw();
-
-
+  CurveBraidFrames cbf = new CurveBraidFrames(elbow.curvebow, MPM, 2, numOfPeriods);
+  cbf.draw("closedCurve");
 
   //-------------
   //choose points on first cross section circle

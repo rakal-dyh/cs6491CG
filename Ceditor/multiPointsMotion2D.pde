@@ -10,7 +10,7 @@ class multiPointsMotion2D{
   multiPointsMotion2D(){
     this.beginVec=V(P(0,0,0),P(0,1,0));
     this.O=P(0,0,0);
-    System.out.println("MPM constructed");
+    //System.out.println("MPM constructed");
   }
 
   void set(float time,int methodId){
@@ -51,7 +51,7 @@ class multiPointsMotion2D{
   //c:   0,  up,down,   0,  up,down
   void method1(float t){
     this.num=3;
-    this.radius=0.3;
+    this.radius=0.1;
     this.cood=new float[2*this.num];
     pt A0=P(-0.6,0.0,0.0);
     pt B0=P(0,0,0);

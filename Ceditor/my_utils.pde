@@ -171,7 +171,12 @@ class elbowControl{
 
   //construction method which will call main function
   elbowControl(pts initialPts){
-    mainDo(initialPts,0,0,true,true,true);
+    mainDo(initialPts,0,0,true,false,false, 36, 36, 20);
+
+  }
+  
+  elbowControl(pts initialPts, int num_of_circles, int num_of_circle_vectors, float rc){
+    mainDo(initialPts,0,0,true,false,false, num_of_circles, num_of_circle_vectors, rc);
 
   }
 
@@ -184,7 +189,8 @@ class elbowControl{
   //forth parameter: true - closed curver
   //fifth parameter: ture - head tail twisted to connected.
   //sixth parameter: ture - plot ppath
-  void mainDo(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead,boolean drawPPath){
+  void mainDo(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead,boolean drawPPath,
+              int num_of_circles, int num_of_circle_vectors, float rc){
     pt[] points=pointsNoOverlapped(initialPts);//from pts to pt[], remove overlapped points
 
     if (subdivisionMethod==0) this.inputPoints=subdivision_default(points);//subdivision, signal=0 means no subdivision
@@ -194,7 +200,7 @@ class elbowControl{
     if (vecMethod==1) this.verticesVec=createVec_FrontEndNoConnection(this.inputPoints);
 
     this.extendPoints=new pt[2*len];
-    this.elbows=calculateElbowsPCC();
+    this.elbows=calculateElbowsPCC(num_of_circles, num_of_circle_vectors, rc);
     extendPolygon=getExtendPolygon();
 
     //make curve, twist involed
@@ -257,7 +263,7 @@ class elbowControl{
 
 
 
-  Elbow[] calculateElbowsPCC(){
+  Elbow[] calculateElbowsPCC(int num_of_circles, int num_of_circle_vectors, float rc){
     int n=this.inputPoints.length;
     Elbow[] elbows=new Elbow[2*n];
     for(int i=0;i<n;i++){
@@ -267,8 +273,8 @@ class elbowControl{
       vec vb=this.verticesVec[getNextInd(i,n)];
       InterpolationWithTwoDMethod tmpElbow=new InterpolationWithTwoDMethod(A,B,va,vb);
 
-      elbows[2*i]=new Elbow(tmpElbow.A,tmpElbow.C,tmpElbow.O1,false);
-      elbows[2*i+1]=new Elbow(tmpElbow.C,tmpElbow.B,tmpElbow.O2,false);
+      elbows[2*i]=new Elbow(tmpElbow.A,tmpElbow.C,tmpElbow.O1,false, num_of_circles, num_of_circle_vectors, rc);
+      elbows[2*i+1]=new Elbow(tmpElbow.C,tmpElbow.B,tmpElbow.O2,false, num_of_circles, num_of_circle_vectors, rc);
       extendPoints[2*i]=tmpElbow.A;
       extendPoints[2*i+1]=tmpElbow.C;
     }
