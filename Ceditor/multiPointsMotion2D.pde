@@ -15,6 +15,8 @@ class multiPointsMotion2D{
   void set(float time,int methodId){
     while (time>1) t--;
     if (methodId==0){method0(time;)}
+    if (methodId==1){method1(time;)}
+    if (methodId==2){method2(time;)}
 
   }
 
