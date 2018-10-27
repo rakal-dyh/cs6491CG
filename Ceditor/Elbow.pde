@@ -11,17 +11,37 @@ class Elbow {
   vec[][] circle_vectors_twisted;
   float arcLength;
   color[] cls = new color[]{yellow, blue, orange, green};
-
+  
   Elbow(pt S, pt E, pt O, boolean isLine) {
     this.S = S; this.E = E; this.O = O;
     this.rc = 20;
     this.isLine = isLine;
     this.isTwisted = false;
-    this.num_of_circles = 36;
-    this.num_of_circle_vectors = 36;
+    this.num_of_circles = 64;
+    this.num_of_circle_vectors = 64;
     this.centers = new pt[num_of_circles + 1];
     this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
+    
+    float r = norm(V(O,S));
+    float alpha = angle(V(O,S), V(O,E));
+    arcLength = alpha * r;
+
+    if (this.isLine) calculateFieldsLine();
+    else calculateFields();
+  }
+
+  Elbow(pt S, pt E, pt O, boolean isLine, int num_of_circles, int num_of_circle_vectors) {
+    this.S = S; this.E = E; this.O = O;
+    this.rc = 20;
+    this.isLine = isLine;
+    this.isTwisted = false;
+    this.num_of_circles = num_of_circles;
+    this.num_of_circle_vectors = num_of_circle_vectors;
+    this.centers = new pt[num_of_circles + 1];
+    this.circle_vectors = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
+    this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
+    
     float r = norm(V(O,S));
     float alpha = angle(V(O,S), V(O,E));
     arcLength = alpha * r;
@@ -114,6 +134,16 @@ class Elbow {
       circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
     }
     if (!isTwisted) isTwisted = true;
+  }
+  
+  void twist_first(float t) {
+    vec[][] target_vectors = circle_vectors;
+    if (isTwisted) target_vectors = circle_vectors_twisted;
+    vec bak_1 = circle_vectors[0][0];
+    vec bak_2 = circle_vectors[0][num_of_circle_vectors / 4];
+    vec bak_1_normalized = V(bak_1).normalize();
+    vec bak_2_normalized = V(bak_2).normalize();
+    circle_vectors_twisted[0][0] = R(target_vectors[0][0], t, bak_1_normalized, bak_2_normalized);
   }
 }
 

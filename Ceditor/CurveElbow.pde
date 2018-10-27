@@ -99,7 +99,7 @@ class CurveElbow{
     float curr_diffK = calculate_tail_head_angle(ea, eb);
     if(curr_diffK!=curr_diffK) curr_diffK=0;
     Elbow eb_copy = E(eb);
-    eb_copy.twist_all(curr_diffK);
+    eb_copy.twist_first(curr_diffK);
     vec vec1 = ea.circle_vectors[ea.num_of_circles][0];
     if (ea.isTwisted) vec1 = ea.circle_vectors_twisted[ea.num_of_circles][0];
     vec vec2 = eb_copy.circle_vectors_twisted[0][0];

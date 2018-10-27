@@ -29,6 +29,17 @@ class ElbowBraidFrames {
       vec vectorFromCenterToPoint = V(coodInFrame[2 * i] * rc, R(bak_1, coodInFrame[2 * i + 1] * direction, bak_1, bak_2));
       pointsInEachFrame[indexOfFrame][i] = P(centers[indexOfFrame], vectorFromCenterToPoint);
     }
+    //System.out.println(direction + ": angle " + coodInFrame[1] * direction + "cood " + pointsInEachFrame[indexOfFrame][0].x);
+  }
+  
+  void setCood(int indexOfFrame, float[] coodInFrame, float offset) {
+    for (int i = 0; i < numOfBraids; i++) {
+      vec bak_1 = zeroVectors[indexOfFrame];
+      vec bak_2 = zeroVectorNormals[indexOfFrame];
+      vec vectorFromCenterToPoint = V(coodInFrame[2 * i] * rc, R(bak_1, coodInFrame[2 * i + 1] + offset, bak_1, bak_2));
+      pointsInEachFrame[indexOfFrame][i] = P(centers[indexOfFrame], vectorFromCenterToPoint);
+    }
+    //System.out.println(direction + ": angle " + coodInFrame[1] * direction + "cood " + pointsInEachFrame[indexOfFrame][0].x);
   }
 
   void draw(float rb) {
@@ -70,22 +81,35 @@ class CurveBraidFrames {
     for (int i = 0; i < ce.elbows.length; i++) {
       ElbowBraidFrames ebf = new ElbowBraidFrames(ce.elbows[i], lengthBeforeEachElbow[i], totalLength, numOfBraids);
       elbowOfFrames[i] = ebf;
-      int direction = 1;
+      float offset = 0;
       for (int j = 0; j < ebf.centers.length; j++) {
         float realTime = getRealTime(ebf.timeOfEachFrame[j], numOfPeriods);
         this.MPM.set(realTime, methodId);
         if (i > 0 && j == 0) {
-          ebf.setCood(j, MPM.cood, direction);
+          ebf.setCood(j, MPM.cood, offset);
           ElbowBraidFrames last_ebf = elbowOfFrames[i - 1];
           pt last_ebf_0 = last_ebf.pointsInEachFrame[last_ebf.centers.length - 1][0];
           pt ebf_0 = ebf.pointsInEachFrame[0][0];
-          System.out.println(last_ebf.timeOfEachFrame[last_ebf.centers.length - 1]);
-          System.out.println(ebf.timeOfEachFrame[0]);
-          System.out.println("________");
+          
           float d = norm(V(last_ebf_0, ebf_0));
-          if (d > 0.001) direction = 1;
+          if (d > 0.001) {
+            //System.out.println(last_ebf_0.x + " " + last_ebf_0.y + " " + last_ebf_0.z);
+            //System.out.println(offset + ": " + ebf_0.x + " " + ebf_0.y + " " + ebf_0.z);
+            
+            vec last_ebf_0v = V(last_ebf.centers[last_ebf.centers.length - 1], last_ebf_0);
+            vec ebf_0v = V(ebf.centers[0], ebf_0);
+            offset = angle(last_ebf_0v, ebf_0v);
+            
+            ebf.setCood(j, MPM.cood, offset);
+            ebf_0 = ebf.pointsInEachFrame[0][0];
+            //System.out.println(offset + ": " + ebf_0.x + " " + ebf_0.y + " " + ebf_0.z);
+            //System.out.println("________");
+            
+            d = norm(V(last_ebf_0, ebf_0));
+            if (d > 0.001) offset = -offset;
+          }
         }
-        ebf.setCood(j, MPM.cood, direction);
+        elbowOfFrames[i].setCood(j, MPM.cood, offset);
       }
     }
   }
@@ -105,9 +129,8 @@ class CurveBraidFrames {
   }
 
   float getRealTime(float timeOfFrame, int numOfPeriods) {
-    float periodTime = 1.0 / numOfPeriods;
-    while (timeOfFrame > periodTime)
-      timeOfFrame -= periodTime;
-    return timeOfFrame / periodTime;
+    float a = timeOfFrame * numOfPeriods;
+    while (a > 1) a -= 1;
+    return a;
   }
 }
