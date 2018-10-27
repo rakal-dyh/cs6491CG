@@ -43,7 +43,9 @@ class CurveBraidFrames {
   ElbowBraidFrames[] elbowOfFrames;
   float totalLength;
   float[] lengthBeforeEachElbow;
+  int methodId;
   int numOfBraids;
+  multiPointsMotion2D MPM;
   
   // for each elbow in CurveElbow create ElbowBraidFrames
   // for each ElbowBraidFrames
@@ -51,10 +53,13 @@ class CurveBraidFrames {
   //         calculate real time for it
   //         get coods for all points inside
   //         set coods for this Frame
-  CurveBraidFrames(CurveElbow ce, int numOfBraids) {
-    this.numOfBraids = numOfBraids;
+  CurveBraidFrames(CurveElbow ce, multiPointsMotion2D MPM, int methodId, int numOfPeriod) {
     getLengths(ce);
     setUpElbowBraidFrames(ce);
+    this.MPM = MPM;
+    this.methodId = methodId;
+    numOfBraids = MPM.methodNumPoints(methodId);
+    this.numOfPeriod = numOfPeriod;
   }
   
   void setUpElbowBraidFrames(CurveElbow ce) {
@@ -64,7 +69,7 @@ class CurveBraidFrames {
       int direction = 1;
       for (int j = 0; j < ebf.centers.length; j++) {
         float realTime = getRealTime(ebf.timeOfEachFrame[j], numOfPeriods);
-        MPM.set(realTime, 0);
+        MPM.set(realTime, methodId);
         if (i > 0 && j == 0) {
           ebf.setCood(j, MPM.cood, direction);
           ElbowBraidFrames last_ebf = elbowOfFrames[i - 1];
