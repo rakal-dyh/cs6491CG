@@ -18,6 +18,7 @@ class multiPointsMotion2D{
     if (methodId==0){method0(time);}
     if (methodId==1){method1(time);}
     if (methodId==2){method2(time);}
+    if (methodId==3){method3(time);}
   }
 
   //2 circles rotation
@@ -146,18 +147,23 @@ class multiPointsMotion2D{
 //   0   1   2   3
   void method2(float t){
     this.num=4;
-    this.radius=0.2;
+    this.radius=0.05;
     this.cood= new float[8];
     pt[][] potentialPt= new pt[4][4];
     for (int i=0;i<4;i++){
       for (int j=0;j<4;j++){
-        potentialPt[i][j]=P(-0.6+0.4*i,-0.6+0.4*j,0);
+        //potentialPt[i][j]=P(-0.6+0.4*i,-0.6+0.4*j,0);
+        potentialPt[i][j]=P(-0.3+0.2*i,-0.3+0.2*j,0);
       }
     }
     pt r1=P(); pt r2=P(); pt b1=P(); pt b2=P();
     pt b1e;pt b2e;pt r1e;pt r2e;
     float frame;
-    if (t*8<1){
+    float[] l=new float[9];
+    //for(int i=0;i<8;i++){l[i]=i+1.0;}
+    //for(int i=0;i<8;i++){l[i]=7.0+float(i)/6.0;}
+    for(int i=0;i<8;i++){l[i]=(i+1.0)/1;}
+    if (t*8<l[0]){
       r1=P(potentialPt[1][2]);
       r2=P(potentialPt[2][1]);
       b1=P(potentialPt[2][2]);
@@ -168,82 +174,88 @@ class multiPointsMotion2D{
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
-    if (t*8<2 && t*8>=1){
+    if (t*8<l[1] && t*8>=l[0]){
       r1=P(potentialPt[1][2]);
       r2=P(potentialPt[2][1]);
       b1=P(potentialPt[3][2]);
       b2=P(potentialPt[0][1]);
-      frame=t*8-1;
+      frame=t*8-l[0];
       r1e=P(potentialPt[1][0]);
       r2e=P(potentialPt[2][3]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
-    if (t*8<3 && t*8>=2){
+    if (t*8<l[2] && t*8>=l[1]){
       r1=P(potentialPt[1][0]);
       r2=P(potentialPt[2][3]);
       b1=P(potentialPt[3][2]);
       b2=P(potentialPt[0][1]);
-      frame=t*8-2;
+      frame=t*8-l[1];
       b1e=P(potentialPt[1][2]);
       b2e=P(potentialPt[2][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
-    if (t*8<4 && t*8>=3){
+    if (t*8<l[3] && t*8>=l[2]){
       r1=P(potentialPt[1][0]);
       r2=P(potentialPt[2][3]);
       b1=P(potentialPt[1][2]);
       b2=P(potentialPt[2][1]);
-      frame=t*8-3;
+      frame=t*8-l[2];
       r1e=P(potentialPt[1][1]);
       r2e=P(potentialPt[2][2]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
-    if (t*8<5 && t*8>=4){
+    if (t*8<l[4] && t*8>=l[3]){
       r1=P(potentialPt[1][1]);
       r2=P(potentialPt[2][2]);
       b1=P(potentialPt[1][2]);
       b2=P(potentialPt[2][1]);
-      frame=t*8-4;
+      frame=t*8-l[3];
       b1e=P(potentialPt[0][2]);
       b2e=P(potentialPt[3][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
-    if (t*8<6 && t*8>=5){
+    if (t*8<l[5] && t*8>=l[4]){
       r1=P(potentialPt[1][1]);
       r2=P(potentialPt[2][2]);
       b1=P(potentialPt[0][2]);
       b2=P(potentialPt[3][1]);
-      frame=t*8-5;
+      frame=t*8-l[4];
       r1e=P(potentialPt[1][3]);
       r2e=P(potentialPt[2][0]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
-    if (t*8<7 && t*8>=6){
+    if (t*8<l[6] && t*8>=l[5]){
       r1=P(potentialPt[1][3]);
       r2=P(potentialPt[2][0]);
       b1=P(potentialPt[0][2]);
       b2=P(potentialPt[3][1]);
-      frame=t*8-6;
+      frame=t*8-l[5];
       b1e=P(potentialPt[2][2]);
       b2e=P(potentialPt[1][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
-    if (t*8>=7){
+    if (t*8<l[7] && t*8>=l[6]){
       r1=P(potentialPt[1][3]);
       r2=P(potentialPt[2][0]);
       b1=P(potentialPt[2][2]);
       b2=P(potentialPt[1][1]);
-      frame=t*8-7;
+      frame=t*8-l[6];
       r1e=P(potentialPt[1][2]);
       r2e=P(potentialPt[2][1]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
+    }
+    if (t*8>=l[7]){
+      r1=P(potentialPt[1][2]);
+      r2=P(potentialPt[2][1]);
+      b1=P(potentialPt[2][2]);
+      b2=P(potentialPt[1][1]);
     }
     this.cood[0]=returnD(r1);
     this.cood[1]=returnAngle(r1);
@@ -255,6 +267,20 @@ class multiPointsMotion2D{
     this.cood[7]=returnAngle(b2);
   }
 
+  void method3(float){
+    this.num=1;
+    this.radius=0.5;
+    this.cood=new float[2*this.num];
+
+    pt A=P(0.75,0.0);
+    float theta=t*TWO_PI;
+
+    A=MyRotate2D(A,theta);
+
+    this.cood[0]=returnD(A);
+    this.cood[1]=returnAngle(A);
+
+  }
 
   //utilities;
 
@@ -289,6 +315,7 @@ class multiPointsMotion2D{
     if (i==0) return 2;
     if (i==1) return 3;
     if (i==2) return 4;
+    if (i==3) return 1;
     return 0;
   }
 
