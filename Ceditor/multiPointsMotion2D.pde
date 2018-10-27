@@ -5,7 +5,7 @@ class multiPointsMotion2D{
   int num;
 
   vec beginVec;
-  pt O=;
+  pt O;
 
   multiPointsMotion2D(){
     this.beginVec=V(P(0,0,0),P(0,1,0));
@@ -14,9 +14,9 @@ class multiPointsMotion2D{
 
   void set(float time,int methodId){
     while (time>1) t--;
-    if (methodId==0){method0(time;)}
-    if (methodId==1){method1(time;)}
-    if (methodId==2){method2(time;)}
+    if (methodId==0){method0(time);}
+    if (methodId==1){method1(time);}
+    if (methodId==2){method2(time);}
 
   }
 
@@ -63,7 +63,7 @@ class multiPointsMotion2D{
       A=A0;
       B=B0;
       C=C0;
-      theta=(t*6)-0)*PI;
+      theta=((t*6)-0)*PI;
       theta=-theta;
       A=MyRotate2D(A,theta,O1);
       B=MyRotate2D(B,theta,O1);
@@ -73,7 +73,7 @@ class multiPointsMotion2D{
       A=B0;
       B=A0;
       C=C0;
-      theta=(t*6)-1)*PI;
+      theta=((t*6)-1)*PI;
       A=MyRotate2D(A,theta,O2);
       C=MyRotate2D(C,theta,O2);
     }
@@ -82,7 +82,7 @@ class multiPointsMotion2D{
       A=C0;
       B=A0;
       C=B0;
-      theta=(t*6)-2)*PI;
+      theta=((t*6)-2)*PI;
       theta=-theta;
       B=MyRotate2D(B,theta,O1);
       C=MyRotate2D(C,theta,O1);
@@ -92,7 +92,7 @@ class multiPointsMotion2D{
       A=C0;
       B=B0;
       C=A0;
-      theta=(t*6)-3)*PI;
+      theta=((t*6)-3)*PI;
       B=MyRotate2D(B,theta,O2);
       A=MyRotate2D(A,theta,O2);
     }
@@ -101,7 +101,7 @@ class multiPointsMotion2D{
       A=B0;
       B=C0;
       C=A0;
-      theta=(t*6)-4)*PI;
+      theta=((t*6)-4)*PI;
       theta=-theta;
       A=MyRotate2D(A,theta,O1);
       C=MyRotate2D(C,theta,O1);
@@ -111,7 +111,7 @@ class multiPointsMotion2D{
       A=A0;
       B=C0;
       C=B0;
-      theta=(t*6)-5)*PI;
+      theta=((t*6)-5)*PI;
       B=MyRotate2D(B,theta,O2);
       C=MyRotate2D(C,theta,O2);
     }
@@ -160,8 +160,8 @@ class multiPointsMotion2D{
       b1=P(potentialPt[2][2]);
       b2=P(potentialPt[1][1]);
       frame=t*8;
-      b1e=potentialPt[3][2]);
-      b2e=potetnialPt[0][1]);
+      b1e=potentialPt[3][2];
+      b2e=potetnialPt[0][1];
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
@@ -260,7 +260,7 @@ class multiPointsMotion2D{
     float xx=cos(theta)*A.x-sin(theta)*A.y;
     float yy=sin(theta)*A.x+cos(theta)*A.y;
     A.set(xx,yy,0);
-    return A:
+    return A;
   }
 
   //2d palin rotation along center point O
@@ -281,6 +281,10 @@ class multiPointsMotion2D{
     return d(this.O,A);
   }
 
-
+  int methodNumPoints(int i){
+    if (i==0) return 2;
+    if (i==1) return 3;
+    if (i==2) return 4;
+  }
 
 }
