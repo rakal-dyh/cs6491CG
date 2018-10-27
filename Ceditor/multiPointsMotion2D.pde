@@ -117,7 +117,7 @@ class multiPointsMotion2D{
     this.cood[1]=returnAngle(A);
     this.cood[2]=returnD(B);
     this.cood[3]=returnAngle(B);
-    this.cood[3]=returnD(C);
+    this.cood[4]=returnD(C);
     this.cood[5]=returnAngle(C);
 
   }
@@ -134,6 +134,13 @@ class multiPointsMotion2D{
   // ------|------   ------|------   ------|------   ------|------
   //    r1 | b2         r1 |    b2         |    b2      b2 |
   //       |               |               | r2            | r2
+
+// 3       |
+// 2    r1 | b1
+//   ------|------
+// 1    b2 | r2
+// 0       |
+//   0   1   2   3
   void method2(float t){
     this.num=4;
     this.radius=0.2;
@@ -146,16 +153,101 @@ class multiPointsMotion2D{
     }
     pt r1; pt r2; pt b1; pt b2;
     if (t*8<1){
-      r1=potentialPt[2][1];
-      r2=potentialPt[1][2];
+      r1=P(potentialPt[1][2]);
+      r2=P(potentialPt[2][1]);
+      b1=P(potentialPt[2][2]);
+      b2=P(potentialPt[1][1]);
+      frame=t*8;
+      b1e=potentialPt[3][2]);
+      b2e=potetnialPt[0][1]);
+      b1=P(b1,frame,b1e);
+      b2=P(b2,frame,b2e);
     }
-    if (t*8<2 && t*8>=1){}
-    if (t*8<3 && t*8>=2){}
-    if (t*8<4 && t*8>=3){}
-    if (t*8<5 && t*8>=4){}
-    if (t*8<6 && t*8>=5){}
-    if (t*8<7 && t*8>=6){}
-    if (t*8>=7){}
+    if (t*8<2 && t*8>=1){
+      r1=P(potentialPt[1][2]);
+      r2=P(potentialPt[2][1]);
+      b1=P(potentialPt[3][2]);
+      b2=P(potentialPt[0][1]);
+      frame=t*8-1;
+      r1e=P(potentialPt[1][0]);
+      r2e=P(potetnialPt[2][3]);
+      r1=P(r1,frame,r1e);
+      r2=P(r2,frame,r2e);
+    }
+    if (t*8<3 && t*8>=2){
+      r1=P(potentialPt[1][0]);
+      r2=P(potentialPt[2][3]);
+      b1=P(potentialPt[3][2]);
+      b2=P(potentialPt[0][1]);
+      frame=t*8-2;
+      b1e=P(potentialPt[1][2]);
+      b2e=P(potetnialPt[2][1]);
+      b1=P(b1,frame,b1e);
+      b2=P(b2,frame,b2e);
+    }
+    if (t*8<4 && t*8>=3){
+      r1=P(potentialPt[1][0]);
+      r2=P(potentialPt[2][3]);
+      b1=P(potentialPt[1][2]);
+      b2=P(potentialPt[2][1]);
+      frame=t*8-3;
+      r1e=P(potentialPt[1][1]);
+      r2e=P(potetnialPt[2][2]);
+      r1=P(r1,frame,r1e);
+      r2=P(r2,frame,r2e);
+    }
+    if (t*8<5 && t*8>=4){
+      r1=P(potentialPt[1][1]);
+      r2=P(potentialPt[2][2]);
+      b1=P(potentialPt[1][2]);
+      b2=P(potentialPt[2][1]);
+      frame=t*8-4;
+      b1e=P(potentialPt[0][2]);
+      b2e=P(potetnialPt[3][1]);
+      b1=P(b1,frame,b1e);
+      b2=P(b2,frame,b2e);
+    }
+    if (t*8<6 && t*8>=5){
+      r1=P(potentialPt[1][1]);
+      r2=P(potentialPt[2][2]);
+      b1=P(potentialPt[0][2]);
+      b2=P(potentialPt[3][1]);
+      frame=t*8-5;
+      r1e=P(potentialPt[1][3]);
+      r2e=P(potetnialPt[2][0]);
+      r1=P(r1,frame,r1e);
+      r2=P(r2,frame,r2e);
+    }
+    if (t*8<7 && t*8>=6){
+      r1=P(potentialPt[1][3]);
+      r2=P(potentialPt[2][0]);
+      b1=P(potentialPt[0][2]);
+      b2=P(potentialPt[3][1]);
+      frame=t*8-6;
+      b1e=P(potentialPt[2][2]);
+      b2e=P(potetnialPt[1][1]);
+      b1=P(b1,frame,b1e);
+      b2=P(b2,frame,b2e);
+    }
+    if (t*8>=7){
+      r1=P(potentialPt[1][3]);
+      r2=P(potentialPt[2][0]);
+      b1=P(potentialPt[2][2]);
+      b2=P(potentialPt[1][1]);
+      frame=t*8-7;
+      r1e=P(potentialPt[1][2]);
+      r2e=P(potetnialPt[2][1]);
+      r1=P(r1,frame,r1e);
+      r2=P(r2,frame,r2e);
+    }
+    this.cood[0]=returnD(r1);
+    this.cood[1]=returnAngle(r1);
+    this.cood[2]=returnD(b1);
+    this.cood[3]=returnAngle(b1);
+    this.cood[4]=returnD(r2);
+    this.cood[5]=returnAngle(r2);
+    this.cood[6]=returnD(b2);
+    this.cood[7]=returnAngle(b2);
   }
 
 
