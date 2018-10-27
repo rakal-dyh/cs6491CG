@@ -52,11 +52,7 @@ class multiPointsMotion2D{
   //c:   0,  up,down,   0,  up,down
   void method1(float t){
     this.num=3;
-<<<<<<< HEAD
     this.radius=0.1;
-=======
-    this.radius=0.2;
->>>>>>> 9601fb675424778b093eebcc5752ece7679f881b
     this.cood=new float[2*this.num];
     pt A0=P(-0.6,0.0,0.0);
     pt B0=P(0,0,0);

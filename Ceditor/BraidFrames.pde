@@ -172,11 +172,11 @@ class CurveBraidFrames {
         pts braidPts = new pts();
         braidPts.declare();
         for (int j = 0; j < elbowOfFrames.length; j++) {
-          for (int k = 0; k < elbowOfFrames[j].pointsInEachFrame.length; k++) {
+          for (int k = 0; k < elbowOfFrames[j].pointsInEachFrame.length - 1; k++) {
             braidPts.addPt(elbowOfFrames[j].pointsInEachFrame[k][i]);
           }
         }
-        elbowControl braidPCC = new elbowControl(braidPts, 2, 4, 8);
+        elbowControl braidPCC = new elbowControl(braidPts, 2, 4, MPM.radius * elbowOfFrames[0].rc);
         braidPCC.curvebow.draw();
       }
     } else if (type.equals("closedCurve")) {
@@ -184,11 +184,11 @@ class CurveBraidFrames {
         pts braidPts = new pts();
         braidPts.declare();
         for (int j = 0; j < elbowOfFrames.length; j++) {
-          for (int k = 0; k < elbowOfFrames[j].pointsInEachFrame.length; k++) {
+          for (int k = 0; k < elbowOfFrames[j].pointsInEachFrame.length - 1; k++) {
             braidPts.addPt(elbowOfFrames[j].pointsInEachFrame[k][i]);
           }
         }
-        braidPts.drawClosedCurve(3);
+        braidPts.drawClosedCurve(MPM.radius * elbowOfFrames[0].rc / 3);
       }
     }
   }
