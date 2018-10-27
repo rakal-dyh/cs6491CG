@@ -1,5 +1,3 @@
-import java.lang.Float;
-
 class CurveElbow{
   Elbow[] elbows;
   float[] twist_end_angles;
@@ -142,9 +140,9 @@ class CurveElbow{
     if (norm(M(vec1, vec2))>0.001) total_twist_end_angles = -total_twist_end_angles;
     
     float total_length = 0;
-    for (Elbow e : elbows) total_length += e.length;
+    for (Elbow e : elbows) total_length += e.arcLength;
     for (int i = 0; i < elbows.length; i++) {
-      twist_end_angles[i] = total_twist_end_angles * elbows[i].length / total_length;
+      twist_end_angles[i] = total_twist_end_angles * elbows[i].arcLength / total_length;
       if (twist_end_angles[i] != twist_end_angles[i]) twist_end_angles[i] = 0;
     }
     //System.out.println(Arrays.toString(twist_end_angles));

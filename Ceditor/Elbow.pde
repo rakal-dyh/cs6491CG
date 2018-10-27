@@ -9,7 +9,7 @@ class Elbow {
   pt[] centers;
   vec[][] circle_vectors;
   vec[][] circle_vectors_twisted;
-  float length;
+  float arcLength;
   color[] cls = new color[]{yellow, blue, orange, green};
 
   Elbow(pt S, pt E, pt O, boolean isLine) {
@@ -24,7 +24,7 @@ class Elbow {
     this.circle_vectors_twisted = new vec[num_of_circles + 1][num_of_circle_vectors + 1];
     float r = norm(V(O,S));
     float alpha = angle(V(O,S), V(O,E));
-    length = alpha * r;
+    arcLength = alpha * r;
 
     if (this.isLine) calculateFieldsLine();
     else calculateFields();
@@ -108,6 +108,7 @@ class Elbow {
       
       for (int j = 0; j < num_of_circle_vectors; j++) {
         float difference = tail - head;
+        circle_vectors[i][j] = R(target_vectors[i][j], head, bak_1_normalized, bak_2_normalized);
         circle_vectors_twisted[i][j] = R(target_vectors[i][j], head + (float) i * difference / num_of_circles, bak_1_normalized, bak_2_normalized);
       }
       circle_vectors_twisted[i][num_of_circle_vectors] = circle_vectors_twisted[i][0];
@@ -130,7 +131,7 @@ Elbow E(Elbow e) {
     result.circle_vectors[i] = Arrays.copyOf(e.circle_vectors[i], e.circle_vectors[i].length);
     result.circle_vectors_twisted[i] = Arrays.copyOf(e.circle_vectors_twisted[i], e.circle_vectors_twisted[i].length);
   }
-  result.length = e.length;
+  result.arcLength = e.arcLength;
   return result;
 }
 
