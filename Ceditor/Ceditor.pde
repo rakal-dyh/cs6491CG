@@ -31,6 +31,9 @@ pts R = new pts(); // inbetweening polyloop L(P,t,Q);
 pts PC = new pts();//point on circle aournd the beginning of first elbow
 int lastChoosePC;//the point selected on PC last time
 
+multiPointsMotion2D MPM;
+int numOfPeriods;
+
 float elbow_twist;
 float ppath_twist;
 
@@ -46,8 +49,8 @@ void setup() {
   PC.declare();
   lastChoosePC=0;
 
-  multiPointsMotion2D MPM=new multiPointsMotion2D();
-  int numOfPeriods=4;
+  MPM=new multiPointsMotion2D();
+  numOfPeriods=10;
 
   noSmooth();
   frameRate(30);
@@ -80,9 +83,18 @@ void draw() {
 
 
   elbowControl elbow=new elbowControl(P);//create elbow curve object
-  elbow.curvebow.draw();//draw elbow
+  //elbow.curvebow.draw();//draw elbow
   //elbow.extendPolygon.drawClosedCurve(5);//draw control polygon
 
+  //-----------
+  //draw braids
+  CurveBraidFrames cbf = new CurveBraidFrames(elbow.curvebow, MPM, 0, numOfPeriods);
+  cbf.draw();
+
+
+
+  //-------------
+  //choose points on first cross section circle
   PC=elbow.curvebow.startCircle;
   PC.pv=lastChoosePC;
   PC.SETppToIDofVertexWithClosestScreenProjectionTo(Mouse());

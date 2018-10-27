@@ -10,6 +10,7 @@ class multiPointsMotion2D{
   multiPointsMotion2D(){
     this.beginVec=V(P(0,0,0),P(0,1,0));
     this.O=P(0,0,0);
+    System.out.println("MPM constructed");
   }
 
   void set(float time,int methodId){
@@ -17,7 +18,6 @@ class multiPointsMotion2D{
     if (methodId==0){method0(time);}
     if (methodId==1){method1(time);}
     if (methodId==2){method2(time);}
-
   }
 
   //2 circles rotation
@@ -31,7 +31,7 @@ class multiPointsMotion2D{
 
     pt A=P(0.5,0.0);
     pt B=P(-0.5,0.0);
-    theta=t*TWO_PI;
+    float theta=t*TWO_PI;
 
     A=MyRotate2D(A,theta);
     B=MyRotate2D(B,theta);
@@ -57,7 +57,8 @@ class multiPointsMotion2D{
     pt C0=P(0.6,0,0);
     pt O1=P(-0.3,0,0);
     pt O2=P(0.3,0,0);
-    pt A;pt B;pt C;
+    pt A=P();pt B=P();pt C=P();
+    float theta;
     if (t*6<1){
       //abc
       A=A0;
@@ -153,7 +154,9 @@ class multiPointsMotion2D{
         potentialPt[i][j]=P(-0.6+0.4*i,-0.6+0.4*j,0);
       }
     }
-    pt r1; pt r2; pt b1; pt b2;
+    pt r1=P(); pt r2=P(); pt b1=P(); pt b2=P();
+    pt b1e;pt b2e;pt r1e;pt r2e;
+    float frame;
     if (t*8<1){
       r1=P(potentialPt[1][2]);
       r2=P(potentialPt[2][1]);
@@ -161,7 +164,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[1][1]);
       frame=t*8;
       b1e=potentialPt[3][2];
-      b2e=potetnialPt[0][1];
+      b2e=potentialPt[0][1];
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
@@ -172,7 +175,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[0][1]);
       frame=t*8-1;
       r1e=P(potentialPt[1][0]);
-      r2e=P(potetnialPt[2][3]);
+      r2e=P(potentialPt[2][3]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
@@ -183,7 +186,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[0][1]);
       frame=t*8-2;
       b1e=P(potentialPt[1][2]);
-      b2e=P(potetnialPt[2][1]);
+      b2e=P(potentialPt[2][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
@@ -194,7 +197,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[2][1]);
       frame=t*8-3;
       r1e=P(potentialPt[1][1]);
-      r2e=P(potetnialPt[2][2]);
+      r2e=P(potentialPt[2][2]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
@@ -205,7 +208,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[2][1]);
       frame=t*8-4;
       b1e=P(potentialPt[0][2]);
-      b2e=P(potetnialPt[3][1]);
+      b2e=P(potentialPt[3][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
@@ -216,7 +219,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[3][1]);
       frame=t*8-5;
       r1e=P(potentialPt[1][3]);
-      r2e=P(potetnialPt[2][0]);
+      r2e=P(potentialPt[2][0]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
@@ -227,7 +230,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[3][1]);
       frame=t*8-6;
       b1e=P(potentialPt[2][2]);
-      b2e=P(potetnialPt[1][1]);
+      b2e=P(potentialPt[1][1]);
       b1=P(b1,frame,b1e);
       b2=P(b2,frame,b2e);
     }
@@ -238,7 +241,7 @@ class multiPointsMotion2D{
       b2=P(potentialPt[1][1]);
       frame=t*8-7;
       r1e=P(potentialPt[1][2]);
-      r2e=P(potetnialPt[2][1]);
+      r2e=P(potentialPt[2][1]);
       r1=P(r1,frame,r1e);
       r2=P(r2,frame,r2e);
     }
@@ -268,6 +271,7 @@ class multiPointsMotion2D{
     A=A.sub(O);
     A=MyRotate2D(A,theta);
     A=A.add(O);
+    return A;
   }
 
   float returnAngle(pt A){
@@ -285,6 +289,7 @@ class multiPointsMotion2D{
     if (i==0) return 2;
     if (i==1) return 3;
     if (i==2) return 4;
+    return 0;
   }
 
 }

@@ -6,7 +6,7 @@ class ElbowBraidFrames {
   pt[][] pointsInEachFrame;
   int numOfBraids;
   float rc;
-  
+
   ElbowBraidFrames(Elbow e, float lengthBeforeThisElbow, float totalLength, int numOfBraids) {
     this.centers = e.centers;
     this.numOfBraids = numOfBraids;
@@ -21,7 +21,7 @@ class ElbowBraidFrames {
       timeOfEachFrame[i] = (lengthBeforeThisElbow + e.arcLength * i / e.num_of_circles) / totalLength;
     }
   }
-  
+
   void setCood(int indexOfFrame, float[] coodInFrame, int direction) {
     for (int i = 0; i < numOfBraids; i++) {
       vec bak_1 = zeroVectors[indexOfFrame];
@@ -30,11 +30,13 @@ class ElbowBraidFrames {
       pointsInEachFrame[indexOfFrame][i] = P(centers[indexOfFrame], vectorFromCenterToPoint);
     }
   }
-  
+
   void draw(float rb) {
     for (int i = 0; i < centers.length - 1; i++) {
-      for (int j = 0; j < numOfBraids; j++)
-        cylinderSection(pointsInEachFrame[i][j], pointsInEachFrame[i + 1][j], rb);
+      for (int j = 0; j < numOfBraids; j++) {
+        fill(red);
+        cylinderSection(pointsInEachFrame[i][j], pointsInEachFrame[i + 1][j], rb * rc);
+      }
     }
   }
 }
@@ -47,7 +49,7 @@ class CurveBraidFrames {
   int numOfBraids;
   multiPointsMotion2D MPM;
   int numOfPeriods;
-  
+
   // for each elbow in CurveElbow create ElbowBraidFrames
   // for each ElbowBraidFrames
   //     for each Frame
@@ -56,46 +58,52 @@ class CurveBraidFrames {
   //         set coods for this Frame
   CurveBraidFrames(CurveElbow ce, multiPointsMotion2D MPM, int methodId, int numOfPeriods) {
     getLengths(ce);
-    setUpElbowBraidFrames(ce);
     this.MPM = MPM;
     this.methodId = methodId;
     numOfBraids = MPM.methodNumPoints(methodId);
     this.numOfPeriods = numOfPeriods;
+    setUpElbowBraidFrames(ce);
   }
-  
+
   void setUpElbowBraidFrames(CurveElbow ce) {
+    elbowOfFrames = new ElbowBraidFrames[ce.elbows.length];
     for (int i = 0; i < ce.elbows.length; i++) {
       ElbowBraidFrames ebf = new ElbowBraidFrames(ce.elbows[i], lengthBeforeEachElbow[i], totalLength, numOfBraids);
       elbowOfFrames[i] = ebf;
       int direction = 1;
       for (int j = 0; j < ebf.centers.length; j++) {
         float realTime = getRealTime(ebf.timeOfEachFrame[j], numOfPeriods);
-        MPM.set(realTime, methodId);
+        this.MPM.set(realTime, methodId);
         if (i > 0 && j == 0) {
           ebf.setCood(j, MPM.cood, direction);
           ElbowBraidFrames last_ebf = elbowOfFrames[i - 1];
           pt last_ebf_0 = last_ebf.pointsInEachFrame[last_ebf.centers.length - 1][0];
-          pt ebf_0 = ebf.pointsInEachFrame[ebf.centers.length - 1][0];
+          pt ebf_0 = ebf.pointsInEachFrame[0][0];
+          System.out.println(last_ebf.timeOfEachFrame[last_ebf.centers.length - 1]);
+          System.out.println(ebf.timeOfEachFrame[0]);
+          System.out.println("________");
           float d = norm(V(last_ebf_0, ebf_0));
-          if (d > 0.001) direction = -1;
+          if (d > 0.001) direction = 1;
         }
-        elbowOfFrames[i].setCood(j, MPM.cood, direction);
+        ebf.setCood(j, MPM.cood, direction);
       }
     }
   }
-  
+
   void draw() {
     for (int i = 0; i < elbowOfFrames.length; i++)
       elbowOfFrames[i].draw(MPM.radius);
   }
-  
+
   void getLengths(CurveElbow ce) {
     totalLength = 0;
     lengthBeforeEachElbow = new float[ce.elbows.length];
-    for (int i = 0; i < ce.elbows.length; i++)
+    for (int i = 0; i < ce.elbows.length; i++) {
       totalLength += ce.elbows[i].arcLength;
+      if (i != 0) lengthBeforeEachElbow[i] = lengthBeforeEachElbow[i - 1] + ce.elbows[i].arcLength;
+    }
   }
-  
+
   float getRealTime(float timeOfFrame, int numOfPeriods) {
     float periodTime = 1.0 / numOfPeriods;
     while (timeOfFrame > periodTime)
