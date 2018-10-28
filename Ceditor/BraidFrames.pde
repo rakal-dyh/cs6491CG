@@ -159,6 +159,7 @@ class CurveBraidFrames {
           }
         }
         ebf.setCood(j, MPM.cood, direction);
+        //if (i == 0 && j == 0) System.out.println(Arrays.toString(MPM.cood));
       }
     }
   }
@@ -174,8 +175,10 @@ class CurveBraidFrames {
         for (int j = 0; j < elbowOfFrames.length; j++) {
           for (int k = 0; k < elbowOfFrames[j].pointsInEachFrame.length - 1; k++) {
             braidPts.addPt(elbowOfFrames[j].pointsInEachFrame[k][i]);
+            //if (j == 0 && k == 0) System.out.println(elbowOfFrames[j].pointsInEachFrame[k][i]);
           }
         }
+        //System.out.println(braidPts);
         elbowControl braidPCC = new elbowControl(braidPts, 2, 4, MPM.radius * elbowOfFrames[0].rc);
         braidPCC.curvebow.draw();
       }

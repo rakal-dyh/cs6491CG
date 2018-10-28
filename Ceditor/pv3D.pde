@@ -29,6 +29,10 @@ class vec
      add(x*c-x-y*s,I); add(x*s+y*c-y,J);
      return this;
      }
+   
+   String toString(){
+     return (Float.toString(x)+","+Float.toString(y)+","+Float.toString(z));
+   }
    } // end class vec
 
 class pt

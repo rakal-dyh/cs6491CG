@@ -180,6 +180,16 @@ void drawElbow(Elbow e) {
         pt B = P(e.centers[j], circle_vectors[j][k + 1]);
         pt C = P(e.centers[j + 1], circle_vectors[j + 1][k + 1]);
         pt D = P(e.centers[j + 1], circle_vectors[j + 1][k]);
+        /*
+        System.out.println("AC: " + e.centers[j].toString());
+        System.out.println("BC: " + e.centers[j].toString());
+        System.out.println("CC: " + e.centers[j + 1].toString());
+        System.out.println("DC: " + e.centers[j + 1].toString());
+        System.out.println("AV: " + circle_vectors[j][k].toString());
+        System.out.println("BV: " + circle_vectors[j][k + 1].toString());
+        System.out.println("CV: " + circle_vectors[j + 1][k + 1].toString());
+        System.out.println("DV: " + circle_vectors[j + 1][k].toString());
+        */
         show(A, B, C, D);
       }
     }
