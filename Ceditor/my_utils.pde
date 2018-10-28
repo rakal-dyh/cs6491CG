@@ -61,14 +61,15 @@ class InterpolationWithTwoDMethod{
       d=(-b-sqrt(b*b-4*a*c))/(2*a);
     }
     //if (d==0){d=0.01;}
-    // if (a==0){
-    //   System.out.println("000!!!");
-    //   if (b==0){
-    //     d=0;
-    //   }
-    //   else{
-    //     d=-c/b;
-    //   }
+    if (a==0){
+      System.out.println("000!!!");
+      if (b==0){
+        d=0;
+      }
+      else{
+        d=-c/b;
+      }
+    }
     //
     // }
     // System.out.println(d);
@@ -84,7 +85,7 @@ class InterpolationWithTwoDMethod{
     vec vc2=V(-1,vc);
     C=P(AA,0.5,BB);
     //System.out.println(C);
-    
+
     vec vna=B(va,vc);//norm to va in va,vc plain
     vec vnb=B(vb,vc2);
     vec vnc1=B(vc,va);
