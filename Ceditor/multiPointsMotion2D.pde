@@ -124,7 +124,6 @@ class multiPointsMotion2D{
     this.cood[3]=returnAngle(B);
     this.cood[4]=returnD(C);
     this.cood[5]=returnAngle(C);
-
   }
 
   //skoubidou
@@ -274,6 +273,7 @@ class multiPointsMotion2D{
     this.cood[5]=returnAngle(r2);
     this.cood[6]=returnD(b2);
     this.cood[7]=returnAngle(b2);
+
   }
 
   void method3(float t){
@@ -461,6 +461,9 @@ class multiPointsMotion2D{
 
   float returnAngle(pt A){
     float angleOA=angle(this.beginVec,V(this.O,A));
+    if (A.x==0 && A.y==0 && A.z==0){
+      return 0;
+    }
     if (A.x<0){
       angleOA=-angleOA;
     }
