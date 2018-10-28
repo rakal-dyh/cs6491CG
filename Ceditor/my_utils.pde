@@ -24,6 +24,9 @@ class InterpolationWithTwoDMethod{
     this.vb.y=-this.vb.y;
     this.vb.z=-this.vb.z;
 
+    //System.out.println(A);
+
+
     // B.x+=0.000001;
     // B.y+=0.000001;
     // B.z+=0.000001;
@@ -52,21 +55,34 @@ class InterpolationWithTwoDMethod{
     c=(A.x-B.x)*(A.x-B.x)+(A.y-B.y)*(A.y-B.y)+(A.z-B.z)*(A.z-B.z);
 
     //d=(-b+(b*b-4*a*c)^0.5)/(2*a);
+
+    if (a==0){a=1;}
     d=(-b-sqrt(b*b-4*a*c))/(2*a);
-    if (a==0){
-      System.out.println("000!!!");
-      d=0;
-    }
+    if (d==0){d=0.1;}
+    // if (a==0){
+    //   System.out.println("000!!!");
+    //   if (b==0){
+    //     d=0;
+    //   }
+    //   else{
+    //     d=-c/b;
+    //   }
+    //
+    // }
     // System.out.println(d);
     // System.out.println(a);
     // char qq='-';
     // System.out.println(qq);
     this.AA=P(A,V(d,va));
     this.BB=P(B,V(d,vb));
+    //System.out.println(AA);
+    //System.out.println(BB);
     vc=U(V(AA,BB));
+    //System.out.println(vc);
     vec vc2=V(-1,vc);
     C=P(AA,0.5,BB);
-
+    //System.out.println(C);
+    
     vec vna=B(va,vc);//norm to va in va,vc plain
     vec vnb=B(vb,vc2);
     vec vnc1=B(vc,va);
@@ -79,21 +95,25 @@ class InterpolationWithTwoDMethod{
 
     //check the angle between vac and vna, to make it <90
     float angle_ac=angle(vac,vna);
+    if (angle_ac!=angle_ac){angle_ac=0;}
     if (angle_ac>PI){
       vna=V(-1,vna);
     }
     //same with vca and vnc1
     float angle_ca=angle(vca,vnc1);
+    if (angle_ca!=angle_ca){angle_ca=0;}
     if (angle_ca>PI){
       vnc1=V(-1,vnc1);
     }
     //check the angle between vbc and vnb, to make it <90
     float angle_bc=angle(vbc,vnb);
+    if (angle_bc!=angle_bc){angle_bc=0;}
     if (angle_bc>PI){
       vnb=V(-1,vnb);
     }
     //same with vcb and vnc2
     float angle_cb=angle(vcb,vnc2);
+    if (angle_cb!=angle_cb){angle_cb=0;}
     if (angle_cb>PI){
       vnc2=V(-1,vnc2);
     }
@@ -102,6 +122,8 @@ class InterpolationWithTwoDMethod{
     findCircleCenter f2=new findCircleCenter(vnb,vnc2,B,C,BB,d);
     this.O1=f1.O;
     this.O2=f2.O;
+    if (O1.x!=O1.x) O1=P(0,0,0);
+    if (O2.x!=O2.x) O2=P(0,0,0);
     this.isLine1=f1.isLine;
     this.isLine2=f2.isLine;
     //System.out.println(O1);
@@ -134,6 +156,13 @@ class findCircleCenter{
     float xc=C.x;
     float yc=C.y;
     float zx=C.z;
+    // if (d==0) {
+    //   System.out.println(vna);
+    //   System.out.println(vnc);
+    //   System.out.println(A);
+    //   System.out.println(C);
+    //   System.out.println(AA);
+    //   }
     //float test=abs(xcv)-abs(xav)+abs(ycv)-abs(yav)+abs(zcv)-abs(zav);
     // if (test<0.00000001){
     //   this.isLine=true;
@@ -154,9 +183,25 @@ class findCircleCenter{
     this.O=P();
     if (!isLine){
       float theta=angle(V(AA,A),V(AA,C))/(2.0);
+      //System.out.println(theta);
+      if (theta!=theta){theta=0;}
       this.r=d*tan(theta);
+      if (r==0){
+        r=0.1;
+      }
       this.O=P(A,r,vna);
+      // if (d==0){
+      //   System.out.println(r);
+      //   System.out.println(theta);
+      //   System.out.println(A);
+      //   System.out.println(O);
+      // }
     }
+    //System.out.println(theta);
+    // System.out.println(A);
+    // System.out.println(r);
+    // System.out.println(O);
+    // System.out.println("---");
   }
 }
 
@@ -174,7 +219,7 @@ class elbowControl{
     mainDo(initialPts,0,0,true,false,false, 36, 36, 20);
 
   }
-  
+
   elbowControl(pts initialPts, int num_of_circles, int num_of_circle_vectors, float rc){
     mainDo(initialPts,0,0,true,false,false, num_of_circles, num_of_circle_vectors, rc);
 
@@ -200,11 +245,14 @@ class elbowControl{
     if (vecMethod==1) this.verticesVec=createVec_FrontEndNoConnection(this.inputPoints);
 
     this.extendPoints=new pt[2*len];
+
     this.elbows=calculateElbowsPCC(num_of_circles, num_of_circle_vectors, rc);
+
     extendPolygon=getExtendPolygon();
 
     //make curve, twist involed
     this.curvebow=new CurveElbow(this.elbows,connectTailHead,alignTailHead,drawPPath);
+
   }
 
   //preprocess,change from pts to pt[], with duplicate point removed
@@ -223,7 +271,7 @@ class elbowControl{
     //count how many non-overlapped points;
     int NumPointUsed=1;
     for (int i=1;i<initalLength;i++){
-      if (d(initialPts.G[i-1],initialPts.G[i])<0.00001) continue;
+      if (d(initialPts.G[i-1],initialPts.G[i])<0.001) continue;
       NumPointUsed++;
     }
 
@@ -232,7 +280,7 @@ class elbowControl{
     points[0]=initialPts.G[0];
     int pos=1;
     for (int i=1;i<initalLength;i++){
-      if (d(initialPts.G[i-1],initialPts.G[i])<0.00001) continue;
+      if (d(initialPts.G[i-1],initialPts.G[i])<0.001) continue;
       points[pos]=initialPts.G[i];
       pos++;
     }
@@ -275,6 +323,10 @@ class elbowControl{
 
       elbows[2*i]=new Elbow(tmpElbow.A,tmpElbow.C,tmpElbow.O1,false, num_of_circles, num_of_circle_vectors, rc);
       elbows[2*i+1]=new Elbow(tmpElbow.C,tmpElbow.B,tmpElbow.O2,false, num_of_circles, num_of_circle_vectors, rc);
+      // System.out.println('-');
+      //System.out.println(tmpElbow.O1);
+      //System.out.println(tmpElbow.O2);
+      // System.out.println('-');
       extendPoints[2*i]=tmpElbow.A;
       extendPoints[2*i+1]=tmpElbow.C;
     }
@@ -283,6 +335,7 @@ class elbowControl{
 
   pts getExtendPolygon(){
     pts expts=new pts();
+
     expts.declare();
     expts.empty();
     for(int i=0;i<extendPoints.length;i++){
