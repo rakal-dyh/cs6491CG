@@ -33,6 +33,8 @@ class Elbow {
 
   Elbow(pt S, pt E, pt O, boolean isLine, int num_of_circles, int num_of_circle_vectors, float rc) {
     this.S = S; this.E = E; this.O = O;
+    if (O.x != O.x)
+      System.out.println(O.toString());
     this.rc = rc;
     this.isLine = isLine;
     this.isTwisted = false;
@@ -93,14 +95,16 @@ class Elbow {
     OS_normal_in_OSE.normalize();
 
     float alpha = angle(OS, OE);
+    if (alpha != alpha) alpha = 0;
     float d_alpha = alpha / num_of_circles;
     float d_beta = TWO_PI / num_of_circle_vectors;
 
     // for loop limit: alpha < e * TWO_PI - d_alpha / 2
     for (int i = 0; i <= num_of_circles; i++) {
       vec OC = V(O, E);
-      if (i < num_of_circles)
+      if (i < num_of_circles) {
         OC = R(OS, i * d_alpha, OS_normalized, OS_normal_in_OSE);
+      }
       pt C = P(O, OC);
       centers[i] = C;
       OC.normalize();
