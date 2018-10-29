@@ -128,16 +128,16 @@ class multiPointsMotion2D{
 
   //skoubidou
   //       |               |               | r2            | r2
-  //    r1 | b1         r1 |    b1         |    b1      b1 |
-  // ------|------   ------|------   ------|------   ------|------
-  //    b2 | r2      b2    | r2      b2    |               | b2
+  //    r1 | b1         r1 | -> b1       | | ^  b1      b1 <-----
+  // ------|------   ------|------   ----|-|-|----   ------|------
+  //    b2 | r2      b2 <- | r2      b2  v | |        -----> b2
   //       |               |            r1 |            r1 |
 
-  //       |               |            r1 |            r1 |
-  //    b1 | r2      b1    | r2      b1    |               | b1
-  // ------|------   ------|------   ------|------   ------|------
-  //    r1 | b2         r1 |    b2         |    b2      b2 |
-  //       |               |               | r2            | r2
+  //       | v             |            r1 |            r1 |
+  //    b1 | r2      b1 <- | r2      b1  ^ | |        -----> b1
+  // ------|------   ------|------   ----|-|-|----   ------|------
+  //    r1 | b2         r1 | -> b2       | | v  b2      b2 <-----
+  //     ^ |               |               | r2            | r2
 
 // 3       |
 // 2    r1 | b1
@@ -273,7 +273,10 @@ class multiPointsMotion2D{
     this.cood[5]=returnAngle(r2);
     this.cood[6]=returnD(b2);
     this.cood[7]=returnAngle(b2);
-
+    //for(int i=0;i<8;i++){
+    //  System.out.println(this.cood[i]);
+    //}
+    //System.out.println("---");
   }
 
   void method3(float t){
@@ -425,7 +428,6 @@ class multiPointsMotion2D{
     pt b1=P(0,-0.1); pt b2=P(0,0.1);
 
     float theta=t*TWO_PI;
-
     r1.y=r1.y-scale*cos(theta);
     r2.y=r2.y+scale*cos(theta);
     b1.x=b1.x-scale*sin(theta);
