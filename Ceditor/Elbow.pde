@@ -200,6 +200,35 @@ void drawElbow(Elbow e) {
   }
 }
 
+void drawElbowPointsOnSurface(Elbow e) {
+  int num_of_vectors_in_strip = e.num_of_circle_vectors / 4;
+  vec[][] circle_vectors = e.circle_vectors_twisted;
+  if (!e.isTwisted) circle_vectors = e.circle_vectors;
+  fill(red);
+  show(e.O, e.rc / 3);
+  for (int i = 0; i < 4; i++) {
+    int start_index = i * num_of_vectors_in_strip;
+    for (int j = 0; j < e.num_of_circles; j++) {
+      //fill(green);
+      //show(e.centers[j], e.rc / 8);
+      for (int k = start_index; k < start_index + num_of_vectors_in_strip; k++) {
+        fill(yellow);
+        pt A = P(e.centers[j], circle_vectors[j][k]);
+        show(A, e.rc / 10);
+      }
+    }
+  }
+}
+
+void drawElbowCrossSectionCenters(Elbow e) {
+  fill(red);
+  show(e.O, e.rc / 3);
+  fill(green);
+  for (int i = 0; i < e.num_of_circles; i++) {
+    show(e.centers[i], e.rc / 8);
+  }
+}
+
 void drawTorusAroundStartCircle(Elbow e) {
   float rp = e.rc / 5;
   for (int i = 0; i < e.num_of_circle_vectors; i++) {
