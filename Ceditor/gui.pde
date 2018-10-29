@@ -110,6 +110,6 @@ void displayFooter()  // Displays help text at the bottom
     scribeFooter(menu,0);
     }
 
-String title ="3D curve editor", name ="YinghuiDong & JJ",
+String title ="3D curve editor", name ="YinghuiDong & Jiuheng Ji",
        menu="?:help, !:picture, ~:(start/stop)capture, space:rotate, `/wheel:closer, t/T:target, a:anim, #:quit",
-       guide="click&drag:pick&slide on floor, xz/XZ:move/ALL, e:exchange, q/p:copy, l/L:load, w/W:write, m:subdivide method"; // user's guide
+       guide="q pressed:select P point for P Path, click&drag:pick&slide on floor, xz/XZ:move/ALL, e:exchange, q/p:copy, l/L:load, w/W:write, m:subdivide method,"; // user's guide
