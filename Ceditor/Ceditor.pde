@@ -38,7 +38,8 @@ float elbow_twist;
 float ppath_twist;
 
 void setup() {
-  myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
+  myFace = loadImage("data/student1.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
+  myFace1 = loadImage("data/student2.jpg");
   textureMode(NORMAL);
   //size(900, 900, P3D); // P3D means that we will do 3D graphics
   size(600, 600, P3D); // P3D means that we will do 3D graphics

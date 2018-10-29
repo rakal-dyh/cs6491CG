@@ -2,6 +2,7 @@
 int pictureCounter=0, frameCounter=0;
 Boolean filming=false, change=false;
 PImage myFace; // picture of author's face, should be: data/pic.jpg in sketch folder
+PImage myFace1;
 void snapPicture() {saveFrame("PICTURES/P"+nf(pictureCounter++,3)+".jpg"); }
 
 // ******************************************COLORS 
