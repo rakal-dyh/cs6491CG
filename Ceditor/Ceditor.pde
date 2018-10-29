@@ -86,12 +86,27 @@ void draw() {
   //-----------------------------------------
 
   //---
-  //create the PCC and correspond elbows
+  //create the PCC and correspond elbows, short command
   //para1: need not be changed, P is the pts which can be modified bt user
   //para2: how many cross section circles for each elbow
   //para3: In each elbow corss section circle, how many vertices used to describe this circle
   //para3: the radius of elbow corss section circle
-  elbowControl elbow=new elbowControl(P, 64, 4, 32);//create elbow curve object
+  //elbowControl elbow=new elbowControl(P, 64, 4, 32);//create elbow curve object
+  
+  //create the PCC and correspond elbows, full command
+  //para1: need not be changed, P is the pts which can be modified bt user
+  //para2: decide whether using subdivision for pts from gui,
+  //       0 - default, no subdivision
+  //para3: decide the method to calculate the vec for each vertices
+  //       0 - default, using the previous and next pt to calcualte vec, ex: for A,B,C vec(B)=V(A,C)
+  //       1 - used for non closed curve, the first point and last point will use different way with method 0, ex: for A,B, vec(A)=V(A,B)
+  //para4: true - closed curver
+  //para5: ture - head tail twisted to connected.
+  //para6: ture - plot ppath
+  //para7: how many cross section circles for each elbow
+  //para8: In each elbow corss section circle, how many vertices used to describe this circle
+  //para9: the radius of elbow corss section circle
+  elbowControl elbow=new elbowControl(P,0,0,true,false,false, 16, 8, 32);//create elbow curve object
 
   //below command will draw origin PCC elbow
   //elbow.curvebow.draw();
