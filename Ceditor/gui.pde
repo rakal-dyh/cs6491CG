@@ -102,6 +102,7 @@ void displayHeader()  // Displays title and authors face on screen
     {
     scribeHeader(title,0); scribeHeaderRight(name);
     fill(white); image(myFace, width-myFace.width/2,25,myFace.width/2,myFace.height/2);
+    fill(white); image(myFace1, width-myFace.width,25,myFace.width/2,myFace.height/2);
     }
 void displayFooter()  // Displays help text at the bottom
     {
@@ -109,6 +110,6 @@ void displayFooter()  // Displays help text at the bottom
     scribeFooter(menu,0);
     }
 
-String title ="3D curve editor", name ="Jarek Rossignac",
+String title ="3D curve editor", name ="YinghuiDong & JJ",
        menu="?:help, !:picture, ~:(start/stop)capture, space:rotate, `/wheel:closer, t/T:target, a:anim, #:quit",
        guide="click&drag:pick&slide on floor, xz/XZ:move/ALL, e:exchange, q/p:copy, l/L:load, w/W:write, m:subdivide method"; // user's guide

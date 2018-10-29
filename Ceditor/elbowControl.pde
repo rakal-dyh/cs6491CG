@@ -98,25 +98,25 @@ class InterpolationWithTwoDMethod{
 
     //check the angle between vac and vna, to make it <90
     float angle_ac=angle(vac,vna);
-    //if (angle_ac!=angle_ac){angle_ac=0;}
+    if (angle_ac!=angle_ac){angle_ac=0;}
     if (angle_ac>PI){
       vna=V(-1,vna);
     }
     //same with vca and vnc1
     float angle_ca=angle(vca,vnc1);
-    //if (angle_ca!=angle_ca){angle_ca=0;}
+    if (angle_ca!=angle_ca){angle_ca=0;}
     if (angle_ca>PI){
       vnc1=V(-1,vnc1);
     }
     //check the angle between vbc and vnb, to make it <90
     float angle_bc=angle(vbc,vnb);
-    //if (angle_bc!=angle_bc){angle_bc=0;}
+    if (angle_bc!=angle_bc){angle_bc=0;}
     if (angle_bc>PI){
       vnb=V(-1,vnb);
     }
     //same with vcb and vnc2
     float angle_cb=angle(vcb,vnc2);
-    //if (angle_cb!=angle_cb){angle_cb=0;}
+    if (angle_cb!=angle_cb){angle_cb=0;}
     if (angle_cb>PI){
       vnc2=V(-1,vnc2);
     }
@@ -125,8 +125,8 @@ class InterpolationWithTwoDMethod{
     findCircleCenter f2=new findCircleCenter(vnb,vnc2,B,C,BB,d);
     this.O1=f1.O;
     this.O2=f2.O;
-    //if (O1.x!=O1.x) O1=P(A);
-    //if (O2.x!=O2.x) O2=P(B);
+    if (O1.x!=O1.x) O1=P(A);
+    if (O2.x!=O2.x) O2=P(B);
     this.isLine1=f1.isLine;
     this.isLine2=f2.isLine;
     //System.out.println(O1);
@@ -187,10 +187,10 @@ class findCircleCenter{
     if (!isLine){
       float theta=angle(V(AA,A),V(AA,C))/(2.0);
       //System.out.println(theta);
-      if (theta!=theta){theta=0.1;}
+      if (theta!=theta){theta=0.0;}
       this.r=d*tan(theta);
       //if (r==0){
-      //  r=0.0;
+      //  r=0.1;
       //}
       this.O=P(A,r,vna);
       // if (d==0){
@@ -220,13 +220,16 @@ class elbowControl{
   //construction method which will call main function
   elbowControl(pts initialPts){
     mainDo(initialPts,0,0,true,false,false, 36, 36, 20);
-
   }
 
   elbowControl(pts initialPts, int num_of_circles, int num_of_circle_vectors, float rc){
     mainDo(initialPts,0,0,true,false,false, num_of_circles, num_of_circle_vectors, rc);
-
   }
+  
+  elbowControl(pts initialPts,int subdivisionMethod,int vecMethod,boolean connectTailHead, boolean alignTailHead,boolean drawPPath,
+              int num_of_circles, int num_of_circle_vectors, float rc){
+                mainDo(initialPts,subdivisionMethod,vecMethod,connectTailHead,alignTailHead,drawPPath, num_of_circles, num_of_circle_vectors, rc);
+              }
 
   //first parameter: fixed, the pts given from gui
   //second parameter: decide whether using subdivision for pts from gui,
