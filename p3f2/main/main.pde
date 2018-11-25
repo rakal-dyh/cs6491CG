@@ -1,7 +1,7 @@
 //  ******************* 2018 Project 3 basecde ***********************
 Boolean
   showFloor=true,
-  showBalls=true,
+  showBalls=false,
   showPillars=false,
   animating=false,
   showEdges=true,
@@ -56,6 +56,9 @@ pts R, S, T;
 EdgeSet BP = new EdgeSet();
 MESH M = new MESH();
 
+//ballSystem
+ballSystem bs=new ballSystem();
+
 void setup() {
   myFace = loadImage("data/pic.jpg");  // load image from file pic.jpg in folder data *** replace that file with your pic of your own face
   textureMode(NORMAL);
@@ -69,6 +72,10 @@ void setup() {
   //frameRate(30);
   sphereDetail(12);
   R=P; S=Q;
+
+  //ballSystem
+  bs.createSingleTestBall();
+  
   println(); println("_______ _______ _______ _______");
   }
 
@@ -80,6 +87,10 @@ void draw() {
   if(showFloor) showFloor(h); // draws dance floor as yellow mat
   doPick(); // sets Of and axes for 3D GUI (see pick Tab)
   R.SETppToIDofVertexWithClosestScreenProjectionTo(Mouse()); // for picking (does not set P.pv)
+
+  //ballStystem
+  bs.setPillars(R,rb,columnHeight);//update the pillar position
+  bs.frameDraw();//calculate each ball trace and then draw, draw pillars as well.
 
   if(showBalls)
       {
