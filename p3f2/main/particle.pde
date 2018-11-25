@@ -77,6 +77,11 @@ class particle{
 		if (isMoving) show(p,radius*drawScale); //draw ball or photon
 		else pillar(p,height,radius*drawScale); //draw pillar
 	}
+
+	@Override
+	String toString(){
+		return (Float.toString(p.x)+","+Float.toString(p.y)+"; ");
+	}
 }
 
 
@@ -84,15 +89,68 @@ class particle{
 //quick detect whether two particle is far enought which will not cause collision in one frame
 boolean potentialCollisionDetection(particle A, particle B){
 	if ((A.isMoving==false) && (B.isMoving==false)) return false; //both pillars;
-	if ((A.speed==-1) || (B.speed==-1)) return true;// one particle is photon;
+	if ((A.speed==-1) || (B.speed==-1)) return false;// one particle is photon; no collision
 	float distance=d(A.p,B.p);
-	//System.out.println(distance);
 	float maxMovement=A.speed+B.speed+A.radius+B.radius;
-	//System.out.println(maxMovement);
 	if (distance>maxMovement) return false;
 	else return true;
 }
 
+//given two particles, either moving or static, return the time they will hit each other, 
+float twoParticleCrossTime(particle A, particle B){
+	float x0,y0,x1,y1,dx0,dy0,dx1,dy1,s0,s1,r;
+	x0=A.p.x; y0=A.p.y;
+	x1=B.p.x; y1=B.p.y;
+	dx0=A.v.x; dy0=A.v.y; 
+	dx1=B.v.x; dy1=B.v.y;
+	s0=A.speed; s1=B.speed;
+	r=A.radius+B.radius;
+	float tx,dtx,ty,dty;//some temp value to simplify calculation
+	tx=x0-x1;
+	dtx=dx0*s0-dx1*s1;
+	ty=y0-y1;
+	dty=dy0*s0-dy1*s1;
+	float a,b,c,delta;//at^2+bt+c=0, delta=b^2-4ac
+	a=dtx*dtx+dty*dty;
+	b=2*(tx*dtx+ty*dty);
+	c=tx*tx+ty*ty-r*r;
+	delta=b*b-4*a*c;
+	if ((a==0) || (delta<0)){
+		return -1;
+	}
+	else{
+		return (-b-sqrt(delta))/(2*a);
+	}
+}
+
+//given A as ball and B as pillar, assume A and B are already in attached threshold status, calculate the rebound direction of ball
+vec ballPillarRebound(particle A, particle B){
+	float effRadius=A.radius+B.radius;
+	float distance=d(A.p,B.p);
+	float diff=effRadius-distance;
+	// System.out.println(effRadius);
+	// System.out.println(distance);
+	// System.out.println(diff);
+	//diff should be small enough, from my test, when effRadius=70, distance is around 69
+	
+	vec p2pVec=U(V(A.p,B.p));
+	vec faceVec=U(Normal(p2pVec));
+	float entryAngle=angle(A.v,faceVec);
+	// System.out.println(B.p);
+	// System.out.println(p2pVec);
+	// System.out.println(faceVec);
+	// System.out.println(entryAngle);
+
+	float fowardSpeed=n(A.v)*cos(entryAngle);
+	float reboundSpeed=n(A.v)*sin(entryAngle);
+	vec fowardVec=V(fowardSpeed,faceVec);
+	vec reboundVec=V(reboundSpeed,V(-1,p2pVec));
+	return U(V(fowardVec,reboundVec));
+}
+
+
+
+//depreciate
 //calculate the time of ball-pillar collision time, if two particles never touchs each other return -1. Here always assume A is ball and B is pillar. So if both are balls will print("error") and return -2
 float ball_pillar_collisionDetection(particle A, particle B){
 	if ((A.isMoving==false) && (B.isMoving==false)) {System.out.println("-ball_pillar_collisionDetection- Warning: both pillars, return -1"); return -1;} //both pillars;
@@ -126,6 +184,8 @@ float ball_pillar_collisionDetection(particle A, particle B){
 	
 }
 
+//depreciate
+//given two lines (in point,vector format), return the cross point
 class twoLineCross{
 	pt twoLineCorssPoint;
 	boolean isParallel;
@@ -168,4 +228,5 @@ class twoLineCross{
 	}
 }
 
-//given two 2d lines, return the cross point
+
+
