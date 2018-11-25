@@ -20,6 +20,15 @@ class ballSystem{
 
 	//calculate all balls trace in one frame
 	void frameCalculation(){
+		System.out.println("----");
+		for (int i=0;i<pillars.num;i++){
+			boolean potential=potentialCollisionDetection(balls.balls[0],pillars.pillars[i]);
+			//System.out.println(potential);
+			if (potential){
+				float coll=ball_pillar_collisionDetection(balls.balls[0],pillars.pillars[i]);
+				System.out.println(coll);
+			}
+		}
 		balls.balls[0].simpleMove(1);
 	}
 
