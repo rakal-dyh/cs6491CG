@@ -22,7 +22,13 @@ class ballSystem{
 		balls.createSingleTestBall();
 	}
 
+	void createDoubleTestBall(){
+		this.balls=new movingballs();
+		balls.createDoubleTestBall();
+	}
+
 	//using current balls and pillars position, calculate next minimum collision time, it will return min(1, next collision time)
+	//this method will also set global variable cursor_ball0, cursor_ball1, cursor_pillar; When two ball hits each other or ball pillar hit, the cursor will set and remain one will be -1
 	float nextCollisionTime(){
 		float minTime=1;
 		this.cursor_ball0=-1;
@@ -30,9 +36,20 @@ class ballSystem{
 		this.cursor_pillar=-1;
 		//ball-ball check
 		for (int i=0;i<balls.num;i++){
-			//pass now
+			for (int j=i+1;j<balls.num;j++){
+				boolean potential=potentialCollisionDetection(balls.balls[i],balls.balls[j]);
+				if (potential){
+					float nextTime=twoParticleCrossTime(balls.balls[i],balls.balls[j]);
+					if (nextTime<minTime && nextTime>=0){
+						minTime=nextTime;
+						cursor_ball0=i;
+						cursor_ball1=j;
+						cursor_pillar=-1;
+					}
+				}
+			}
 		}
-		//ball-pillar check{
+		//ball-pillar check
 		for (int i=0;i<balls.num;i++){
 			for (int j=0;j<pillars.num;j++){
 				boolean potential=potentialCollisionDetection(balls.balls[i],pillars.pillars[j]);
@@ -42,6 +59,7 @@ class ballSystem{
 					if (nextTime<minTime && nextTime>=0){
 						minTime=nextTime;
 						cursor_ball0=i;
+						cursor_ball1=-1;
 						cursor_pillar=j;
 					}
 				}
@@ -52,41 +70,31 @@ class ballSystem{
 
 	//calculate all balls trace in one frame
 	void frameCalculation(){
-		//System.out.println("----");
-		// boolean move=true;
-		// for (int i=0;i<pillars.num;i++){
-		// 	boolean potential=potentialCollisionDetection(balls.balls[0],pillars.pillars[i]);
-		// 	//System.out.println(potential);
-		// 	if (potential){
-		// 		//float coll=ball_pillar_collisionDetection(balls.balls[0],pillars.pillars[i]);
-		// 		// System.out.println(balls.balls[0]);
-		// 		float coll2=twoParticleCrossTime(balls.balls[0],pillars.pillars[i]);
-		// 		// System.out.println(balls.balls[0]);
-		// 		// System.out.println(coll);
-		// 		// System.out.println(coll2);
-		// 		if ((coll2<1) && (coll2>=0)) balls.balls[0].simpleMove(coll2);
-		// 		if (coll2<0) move=false;
-		// 	}
-		// }
-		// if (move) balls.balls[0].simpleMove(1);
-		boolean move=true;
-		float t=nextCollisionTime();
-		//System.out.println(t);
-		if (t>=1) balls.balls[0].simpleMove(t);
-		if ((t<1) && (t>=0)){
-			//System.out.println(balls.balls[0].v);
-			balls.balls[0].simpleMove(t);
-			vec reboundDirection=ballPillarRebound(balls.balls[this.cursor_ball0],pillars.pillars[this.cursor_pillar]);
-			balls.balls[this.cursor_ball0].v=reboundDirection;
-			System.out.println(balls.balls[0].p);
-			balls.balls[0].simpleMove(1-t);
-			System.out.println(balls.balls[0].p);
-			System.out.println(twoParticleCrossTime(balls.balls[this.cursor_ball0],pillars.pillars[this.cursor_pillar]));
-			//System.out.println(balls.balls[0].v);
+		float accumulateTime=0;
+		float t;
+		//System.out.println("=======");
+		while (true){
+			t=nextCollisionTime(); // get closed next collision time
+			//System.out.println(t);
+			if (accumulateTime+t>=1){balls.simpleMoveAll(1-accumulateTime); break;} //next collision not ccur in this frame
+			balls.simpleMoveAll(t); // all balls move time t (no collision between t)
+			if (this.cursor_ball1==-1){
+				//this means the next collision happens between ball and pillar
+				ballPillarRebound(balls.balls[this.cursor_ball0],pillars.pillars[this.cursor_pillar]);
+			}
+			if (this.cursor_pillar==-1){
+				//this means the next collision happens between two balls
+				ballBallRebound(balls.balls[this.cursor_ball0],balls.balls[this.cursor_ball1]);
+				// System.out.println("----");
+				// System.out.println(this.cursor_ball0);
+				// System.out.println(balls.balls[this.cursor_ball0].v);
+				// System.out.println(balls.balls[this.cursor_ball1].v);
+				// System.out.println("----");
+			}
+			accumulateTime+=t;//get accumulate time
+
 		}
-		// if (t<0) move=false;
-		// if (move) balls.balls[0].simpleMove(1);
-		// if (this.cursor_ball0>=0) ballPillarRebound(balls.balls[this.cursor_ball0],pillars.pillars[this.cursor_pillar]);
+
 	}
 
 	//call calculation function and draw
@@ -113,6 +121,22 @@ class movingballs{
 		balls[0].asMovingBall();
 		balls[0].setRadius(20);
 		balls[0].setSpeed(2);
+	}
+
+	void createDoubleTestBall(){
+		this.num=2;
+		balls=new particle[this.num];
+		for (int i=0;i<this.num;i++){
+			balls[i]=new particle(P(i*500+300,i*500+300,0));
+			balls[i].asMovingBall();
+			balls[i].setRadius(20);
+			balls[i].setSpeed(3);
+		}
+		balls[1].v=V(-1,-1,0);
+		balls[1].directionVecNorm(true);
+		balls[1].setSpeed(5);
+		balls[0].setSpeed(5);
+		balls[0].setMass(1);
 	}
 
 	//move all balls in line by given frameTime

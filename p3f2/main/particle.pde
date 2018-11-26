@@ -123,31 +123,86 @@ float twoParticleCrossTime(particle A, particle B){
 	}
 }
 
-//given A as ball and B as pillar, assume A and B are already in attached threshold status, calculate the rebound direction of ball
+//given A as ball and B as pillar, assume A and B are already in attached threshold status, calculate the rebound direction of ball A and then reset it
 vec ballPillarRebound(particle A, particle B){
-	float effRadius=A.radius+B.radius;
-	float distance=d(A.p,B.p);
-	float diff=effRadius-distance;
-	// System.out.println(effRadius);
-	// System.out.println(distance);
-	// System.out.println(diff);
-	//diff should be small enough, from my test, when effRadius=70, distance is around 69
+	// float effRadius=A.radius+B.radius;
+	// float distance=d(A.p,B.p);
+	// float diff=effRadius-distance;
+	//before are used to check whether given ball and pillar are closed to each other
 	
-	vec p2pVec=U(V(A.p,B.p));
+	vec p2pVec=U(V(A.p,B.p));//vector from ball center point to pillar center point
 	vec faceVec=U(Normal(p2pVec));
 	float entryAngle=angle(A.v,faceVec);
-	// System.out.println(B.p);
-	// System.out.println(p2pVec);
-	// System.out.println(faceVec);
-	// System.out.println(entryAngle);
-
-	float fowardSpeed=n(A.v)*cos(entryAngle);
-	float reboundSpeed=n(A.v)*sin(entryAngle);
+	float fowardSpeed=n(A.v)*cos(entryAngle); //speed along the face
+	float reboundSpeed=n(A.v)*sin(entryAngle); //speed normal to face
+	
 	vec fowardVec=V(fowardSpeed,faceVec);
 	vec reboundVec=V(reboundSpeed,V(-1,p2pVec));
-	return U(V(fowardVec,reboundVec));
+	A.v=U(A(fowardVec,reboundVec));
+	return U(A(fowardVec,reboundVec));
 }
 
+//given two balls A and B, return the rebound direction of two balls; Considering mass effect, perfect elastic
+vec[] ballBallRebound(particle A, particle B){
+	// float effRadius=A.radius+B.radius;
+	// float distance=d(A.p,B.p);
+	// float diff=effRadius-distance;
+	//before are used to check whether given ball and pillar are closed to each other
+
+	vec[] endVec=new vec[2];
+	vec p2pVec=U(V(A.p,B.p));//vector from ball center point to pillar center point
+	vec faceVec=U(Normal(p2pVec));
+
+	//System.out.println(p2pVec);
+	//System.out.println(faceVec);
+
+	float s1=A.speed;
+	float s2=B.speed;
+
+	float angle1=angle(A.v,faceVec);
+	float angle2=angle(B.v,faceVec);
+	float fowardSpeed1=n(A.v)*cos(angle1)*s1; //speed along the face of ball A
+	float reboundSpeed1=n(A.v)*sin(angle1)*s1; //speed normal to face of ball A
+	float fowardSpeed2=n(B.v)*cos(angle2)*s2; //speed along the face of ball B
+	float reboundSpeed2=n(B.v)*sin(angle2)*s2; //speed normal to face of ball B
+
+	// if (fowardSpeed1<0.00001) fowardSpeed1=0;
+	// if (fowardSpeed2<0.00001) fowardSpeed2=0;
+
+	//give the direction to rebound speed, define from point A to point B direction are position
+	if (angle(p2pVec,A.v)>PI/2) reboundSpeed1=-reboundSpeed1;
+	if (angle(p2pVec,B.v)>PI/2) reboundSpeed2=-reboundSpeed2;
+	if ((abs(A.v.x+p2pVec.x)<0.00001) && (abs(A.v.y+p2pVec.y)<0.00001)) reboundSpeed1=-reboundSpeed1; //angle = NaN when actually angle = 0 or PI
+	if ((abs(B.v.x+p2pVec.x)<0.00001) && (abs(B.v.y+p2pVec.y)<0.00001)) reboundSpeed2=-reboundSpeed2;
+
+	float m1=A.mass;
+	float m2=B.mass;
+
+	float tmp=reboundSpeed1;
+	reboundSpeed1=((m1-m2)*reboundSpeed1+2*m2*reboundSpeed2)/(m1+m2);
+	reboundSpeed2=((m2-m1)*reboundSpeed2+2*m1*tmp)/(m1+m2);
+
+	vec fowardVec1=V(fowardSpeed1,faceVec);
+	vec reboundVec1=V(reboundSpeed1,p2pVec);
+	endVec[0]=A(fowardVec1,reboundVec1);
+
+	vec fowardVec2=V(fowardSpeed2,faceVec);
+	vec reboundVec2=V(reboundSpeed2,p2pVec);
+	endVec[1]=A(fowardVec2,reboundVec2);
+
+	A.speed=n(endVec[0]);
+	B.speed=n(endVec[1]);
+	if (A.speed!=0) A.v=U(endVec[0]);
+	//else A.v=V(1,0,0); //avoid zero vector
+	if (B.speed!=0) B.v=U(endVec[1]);
+	//else B.v=V(1,0,0);
+	
+	System.out.println(A.speed);
+	System.out.println(B.speed);
+	System.out.println("---");
+
+	return endVec;
+}
 
 
 //depreciate

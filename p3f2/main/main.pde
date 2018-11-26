@@ -74,7 +74,8 @@ void setup() {
   R=P; S=Q;
 
   //ballSystem
-  bs.createSingleTestBall();
+  //bs.createSingleTestBall();
+  bs.createDoubleTestBall();
 
   println(); println("_______ _______ _______ _______");
   }
