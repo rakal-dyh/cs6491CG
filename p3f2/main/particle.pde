@@ -1,5 +1,5 @@
 class particle{
-	pt p=P();			       //particle position
+	pt p=P();			   //particle position
 	vec v=new vec();       //particle moving direction, assume unit vector. If not, "directionNorm" can trim the vector to unit and increase the speed
 	float radius=1;        //particle radius
 	float speed=10;        //particle moving speed, -1 means inf (can be used for photon)
@@ -7,7 +7,10 @@ class particle{
 	boolean isMoving=true; //if particle can move, isMoving = true: ball or photon; isMoving = false: pillar
 	float drawScale=1;     //when drawing, draw size = radius * drawScale;
 	float height=80;       //this is only used when particle considered as pillar
+	float hitNumber=0;     //How many time this particle hit other paricles
+	float energy=0;        //photon engergy
 
+	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds, float h, float hit, float e){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds; this.height=h; this.hitNumber=hit; this.energy=e;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds, float h){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds; this.height=h;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving;}
@@ -27,7 +30,7 @@ class particle{
 	void setDrawScale(float s){this.drawScale=s;}
 	void setHeight(float h){this.height=h;}
 
-	particle copy(){return new particle(this.p, this.v, this.radius, this.speed, this.mass, this.isMoving, this.drawScale, this.height);}
+	particle copy(){return new particle(this.p, this.v, this.radius, this.speed, this.mass, this.isMoving, this.drawScale, this.height, this.hitNumber, this.energy);}
 	
 	//set particle as photon
 	particle asPhoton(){
@@ -36,7 +39,19 @@ class particle{
 		this.mass=0;//photon has no mass
 		this.isMoving=true;
 		this.drawScale=5;//for visualization
+		this.energy=10;
 		directionVecNorm(true);
+		return this;
+	}
+
+	particle asPhoton(vec v){
+		this.radius=0;
+		this.v=v;
+		this.mass=0;//photon has no mass
+		this.isMoving=true;
+		this.drawScale=5;//for visualization
+		this.energy=10;
+		this.speed=1000;
 		return this;
 	}
 
@@ -129,6 +144,8 @@ vec ballPillarRebound(particle A, particle B){
 	// float distance=d(A.p,B.p);
 	// float diff=effRadius-distance;
 	//before are used to check whether given ball and pillar are closed to each other
+	A.hitNumber+=1;
+	B.hitNumber+=1;
 	
 	vec p2pVec=U(V(A.p,B.p));//vector from ball center point to pillar center point
 	vec faceVec=U(Normal(p2pVec));
@@ -148,6 +165,8 @@ vec[] ballBallRebound(particle A, particle B){
 	// float distance=d(A.p,B.p);
 	// float diff=effRadius-distance;
 	//before are used to check whether given ball and pillar are closed to each other
+	A.hitNumber+=1;
+	B.hitNumber+=1;
 
 	vec[] endVec=new vec[2];
 	vec p2pVec=U(V(A.p,B.p));//vector from ball center point to pillar center point

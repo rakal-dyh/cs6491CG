@@ -134,9 +134,9 @@ class movingballs{
 		}
 		balls[1].v=V(-1,-1,0);
 		balls[1].directionVecNorm(true);
-		balls[1].setSpeed(5);
-		balls[0].setSpeed(5);
-		balls[0].setMass(1);
+		balls[1].setSpeed(2);
+		balls[0].setSpeed(2);
+		balls[0].setMass(3);
 	}
 
 	//move all balls in line by given frameTime
