@@ -1,6 +1,7 @@
 class ballSystem{
 	staticPillars pillars; // collection of all pillars (extension of particles[])
 	movingballs balls; //collection of all balls (extension of particles[])
+	pts Q=new pts();
 
 	int cursor_ball0=-1;
 	int cursor_ball1=-1;
@@ -14,6 +15,7 @@ class ballSystem{
 	//set pillars from pts Q
 	void setPillars(pts Q,float rb, float h){
 		this.pillars=new staticPillars(Q,rb,h);
+		this.Q = Q;
 	}
 
 	//create one test ball
@@ -97,12 +99,19 @@ class ballSystem{
 
 	}
 
+	void updateHits(){
+		for (int i=0;i<this.Q.nv;i++){
+			Q.hits[i]=pillars.pillars[i].hitNumber;
+		}
+	}
+
 	//call calculation function and draw
 	void frameDraw(){
 		frameCalculation();
-		fill(green);
+		updateHits();
+		//fill(green);
 		pillars.draw();
-		fill(red);
+		//fill(red);
 		balls.draw();
 	}
 }
@@ -136,7 +145,7 @@ class movingballs{
 		balls[1].directionVecNorm(true);
 		balls[1].setSpeed(2);
 		balls[0].setSpeed(2);
-		balls[0].setMass(3);
+		balls[0].setMass(1);
 	}
 
 	//move all balls in line by given frameTime
@@ -149,6 +158,7 @@ class movingballs{
 
 class staticPillars{
 	particle[] pillars;
+	
 	int num=0;
 
 	staticPillars(){}
@@ -158,7 +168,7 @@ class staticPillars{
 		this.num=Q.nv;
 		pillars=new particle[num];
 		for (int i=0;i<num;i++){
-			pillars[i]=new particle(Q.G[i]);
+			pillars[i]=new particle(Q.G[i],Q.hits[i]);
 			pillars[i].p.z=0;
 			pillars[i].asPillar();
 			pillars[i].setHeight(h);

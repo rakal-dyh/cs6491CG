@@ -12,6 +12,7 @@ class pts // class for manipulaitng and displaying pointclouds or polyloops in 3
         nv = 0,    // number of vertices currently used in P
         pp=1; // index of picked vertex
 
+    int[] hits=new int[100];
   pts() {}
   String toString(){
     if (nv==0){
@@ -29,6 +30,7 @@ class pts // class for manipulaitng and displaying pointclouds or polyloops in 3
     {
     for (int i=0; i<maxnv; i++) G[i]=P();
     for (int i=0; i<maxnv; i++) LL[i]=V();
+    for (int i=0; i<100;i++) hits[i]=0;
     return this;
     }     // init all point objects
   pts empty() {nv=0; pv=0; return this;}                                 // resets P so that we can start adding points

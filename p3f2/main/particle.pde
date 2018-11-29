@@ -7,10 +7,10 @@ class particle{
 	boolean isMoving=true; //if particle can move, isMoving = true: ball or photon; isMoving = false: pillar
 	float drawScale=1;     //when drawing, draw size = radius * drawScale;
 	float height=80;       //this is only used when particle considered as pillar
-	float hitNumber=0;     //How many time this particle hit other paricles
+	int hitNumber=0;     //How many time this particle hit other paricles
 	float energy=0;        //photon engergy
 
-	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds, float h, float hit, float e){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds; this.height=h; this.hitNumber=hit; this.energy=e;}
+	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds, float h, int hit, float e){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds; this.height=h; this.hitNumber=hit; this.energy=e;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds, float h){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds; this.height=h;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving, float ds){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving; this.drawScale=ds;}
 	particle(pt pos, vec v, float r, float speed, float mass, boolean isMoving){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed; this.mass=mass; this.isMoving=isMoving;}
@@ -18,7 +18,8 @@ class particle{
 	particle(pt pos, vec v, float r, float speed){ this.p.set(pos); this.v.set(v); this.radius=r; this.speed=speed;}
 	particle(pt pos, vec v, float r){ this.p.set(pos); this.v.set(v); this.radius=r;}	
 	particle(pt pos, vec v){ this.p.set(pos); this.v.set(v);}
-	particle(pt pos){ this.p.set(pos);}		
+	particle(pt pos){ this.p.set(pos);}	
+	particle(pt pos,int hit){this.p.set(pos); this.hitNumber=hit;}	
 	particle(){}
 
 	void setPt(pt p){this.p.set(p);}
@@ -89,8 +90,16 @@ class particle{
 	}
 
 	void draw(){
-		if (isMoving) show(p,radius*drawScale); //draw ball or photon
-		else pillar(p,height,radius*drawScale); //draw pillar
+		if (isMoving) {
+		float c=250-this.hitNumber*10;
+		fill(c,c,c);
+		show(p,radius*drawScale); //draw ball or photon
+		}
+		else {
+		float c=250-this.hitNumber*100;
+		fill(c,c,c);
+		pillar(p,height,radius*drawScale); //draw pillar
+		}
 	}
 
 	@Override
